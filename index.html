@@ -4,49 +4,67 @@
   <title>Heart Tree</title>
 
   <style>
+
     body {
       margin: 0;
       height: 100vh;
       background: #111;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
       font-family: Arial, sans-serif;
     }
 
     .card {
       width: 850px;
       height: 520px;
+
       background: #fff7ef;
+
       border-radius: 25px;
+
       position: relative;
+
       overflow: hidden;
     }
 
     .text {
       position: absolute;
+
       left: 35px;
       top: 40px;
-      width: 330px;
+
+      width: 340px;
+
       font-size: 18px;
+
       color: #222;
+
       z-index: 2;
     }
 
     canvas {
       position: absolute;
-      right: 20px;
-      top: 10px;
+
+      right: 10px;
+      top: 0;
     }
 
     .timer {
       position: absolute;
+
       left: 35px;
       bottom: 45px;
+
       font-size: 18px;
+
       color: #333;
+
       z-index: 2;
     }
+
   </style>
 </head>
 
@@ -55,69 +73,144 @@
   <div class="card">
 
     <div class="text">
+
       <p>To the love of my life:</p>
 
       <p>
         If I could choose one safe place,<br>
         it would be beside you.
       </p>
+
     </div>
 
-    <canvas id="treeCanvas" width="500" height="450"></canvas>
+    <canvas id="treeCanvas"
+            width="520"
+            height="470"></canvas>
 
     <div class="timer">
+
       My love for you began...
+
       <br><br>
+
       <span id="counter"></span>
+
     </div>
 
   </div>
 
   <script>
-    const canvas = document.getElementById("treeCanvas");
-    const ctx = canvas.getContext("2d");
+
+    /*
+      ============================================================
+      CANVAS SETUP
+      ============================================================
+    */
+
+    const canvas =
+      document.getElementById("treeCanvas");
+
+    const ctx =
+      canvas.getContext("2d");
+
+
+    /*
+      ============================================================
+      COLOURS
+      ============================================================
+    */
 
     const colours = [
-      "#ff2d75",
       "#ff0066",
-      "#ffcc00",
+      "#ff2d75",
+      "#ff4f8b",
       "#ff6b6b",
-      "#ff1493",
-      "#ff8a80"
+      "#ff8a80",
+      "#ffcc00",
+      "#ffd84d"
     ];
+
+
+    /*
+      ============================================================
+      STORAGE ARRAYS
+      ============================================================
+    */
 
     const hearts = [];
 
-    function heartPoint(t, scale) {
-      const x = 16 * Math.pow(Math.sin(t), 3);
+    const fallingHearts = [];
 
-      const y = -(
-        13 * Math.cos(t)
-        - 5 * Math.cos(2 * t)
-        - 2 * Math.cos(3 * t)
-        - Math.cos(4 * t)
-      );
 
-      return {
-        x: 250 + x * scale,
-        y: 145 + y * scale
-      };
+    /*
+      ============================================================
+      RANDOM COLOUR
+      ============================================================
+    */
+
+    function randomColour() {
+
+      return colours[
+        Math.floor(
+          Math.random() * colours.length
+        )
+      ];
     }
 
-    function drawHeart(x, y, size, colour, opacity) {
+
+    /*
+      ============================================================
+      DRAW HEART
+      ============================================================
+
+      Draws a heart shape directly onto canvas.
+    */
+
+    function drawHeart(
+      x,
+      y,
+      size,
+      colour,
+      opacity,
+      rotation
+    ) {
+
       ctx.save();
 
       ctx.translate(x, y);
-      ctx.rotate(Math.PI / 4);
+
+      ctx.rotate(rotation);
 
       ctx.globalAlpha = opacity;
+
       ctx.fillStyle = colour;
 
-      ctx.fillRect(-size / 2, -size / 2, size, size);
-
       ctx.beginPath();
-      ctx.arc(-size / 2, 0, size / 2, 0, Math.PI * 2);
-      ctx.arc(0, -size / 2, size / 2, 0, Math.PI * 2);
+
+      ctx.moveTo(0, size * 0.35);
+
+      ctx.bezierCurveTo(
+        -size,
+        -size * 0.35,
+
+        -size * 0.55,
+        -size,
+
+        0,
+        -size * 0.45
+      );
+
+      ctx.bezierCurveTo(
+        size * 0.55,
+        -size,
+
+        size,
+        -size * 0.35,
+
+        0,
+        size * 0.35
+      );
+
       ctx.fill();
 
       ctx.restore();
@@ -125,106 +218,440 @@
       ctx.globalAlpha = 1;
     }
 
-    function createHearts() {
-      for (let i = 0; i < 900; i++) {
-        const t = Math.random() * Math.PI * 2;
-        const r = Math.pow(Math.random(), 0.55);
 
-        const p = heartPoint(t, 10 * r);
+    /*
+      ============================================================
+      CREATE TREE CANOPY
+      ============================================================
+    */
+
+    function createCanopy() {
+
+      /*
+        MAIN HEART TREE
+      */
+      for (let i = 0; i < 1100; i++) {
+
+        const t =
+          Math.random() * Math.PI * 2;
+
+        /*
+          Controls distribution density
+        */
+        const r =
+          Math.pow(Math.random(), 0.58);
+
+        /*
+          HEART EQUATION
+        */
+        const xShape =
+          16 * Math.pow(Math.sin(t), 3);
+
+        const yShape = -(
+          13 * Math.cos(t)
+          - 5 * Math.cos(2 * t)
+          - 2 * Math.cos(3 * t)
+          - Math.cos(4 * t)
+        );
 
         hearts.push({
-          x: p.x,
-          y: p.y,
-          size: 4 + Math.random() * 7,
-          colour: colours[Math.floor(Math.random() * colours.length)],
-          speed: 0.4 + Math.random() * 0.8,
-          offset: Math.random() * 100,
-          opacity: 0.65 + Math.random() * 0.35
+
+          /*
+            FINAL POSITION
+          */
+          x:
+            260 + xShape * 9.2 * r,
+
+          y:
+            160 + yShape * 7.4 * r,
+
+          /*
+            START POSITION
+            (growing from trunk)
+          */
+          startX: 260,
+          startY: 360,
+
+          size:
+            3.5 + Math.random() * 8.5,
+
+          colour:
+            randomColour(),
+
+          opacity:
+            0.55 + Math.random() * 0.45,
+
+          /*
+            Delays create bloom effect
+          */
+          delay:
+            Math.random() * 140,
+
+          sway:
+            Math.random() * 1.8,
+
+          phase:
+            Math.random() * 100,
+
+          rotation:
+            -0.4 + Math.random() * 0.8
+        });
+      }
+
+
+      /*
+        FALLING HEARTS
+      */
+      for (let i = 0; i < 35; i++) {
+
+        fallingHearts.push({
+
+          x:
+            120 + Math.random() * 340,
+
+          y:
+            -Math.random() * 450,
+
+          size:
+            5 + Math.random() * 8,
+
+          speed:
+            0.25 + Math.random() * 0.6,
+
+          colour:
+            randomColour(),
+
+          phase:
+            Math.random() * 100,
+
+          opacity:
+            0.45 + Math.random() * 0.35
         });
       }
     }
 
-    function drawTree() {
-      ctx.save();
+
+    /*
+      ============================================================
+      DRAW CURVED BRANCH
+      ============================================================
+    */
+
+    function drawCurvedBranch(
+      startX,
+      startY,
+
+      cp1X,
+      cp1Y,
+
+      cp2X,
+      cp2Y,
+
+      endX,
+      endY,
+
+      width
+    ) {
+
+      ctx.beginPath();
+
+      ctx.moveTo(startX, startY);
+
+      ctx.bezierCurveTo(
+        cp1X,
+        cp1Y,
+
+        cp2X,
+        cp2Y,
+
+        endX,
+        endY
+      );
+
+      ctx.lineWidth = width;
 
       ctx.strokeStyle = "#008b80";
+
       ctx.lineCap = "round";
 
-      ctx.lineWidth = 14;
-
-      ctx.beginPath();
-      ctx.moveTo(250, 390);
-      ctx.bezierCurveTo(245, 330, 250, 275, 250, 230);
       ctx.stroke();
+    }
 
-      ctx.lineWidth = 8;
 
+    /*
+      ============================================================
+      DRAW TREE
+      ============================================================
+    */
+
+    function drawTree(progress) {
+
+      ctx.save();
+
+      ctx.globalAlpha =
+        Math.min(1, progress * 1.5);
+
+      ctx.fillStyle = "#008b80";
+
+
+      /*
+        TREE TRUNK
+      */
       ctx.beginPath();
-      ctx.moveTo(250, 270);
-      ctx.bezierCurveTo(210, 235, 190, 200, 160, 165);
-      ctx.stroke();
 
-      ctx.beginPath();
-      ctx.moveTo(250, 270);
-      ctx.bezierCurveTo(290, 235, 315, 200, 345, 165);
-      ctx.stroke();
+      ctx.moveTo(245, 430);
 
-      ctx.beginPath();
-      ctx.moveTo(250, 235);
-      ctx.bezierCurveTo(225, 210, 215, 180, 205, 145);
-      ctx.stroke();
+      ctx.bezierCurveTo(
+        250,
+        365,
 
-      ctx.beginPath();
-      ctx.moveTo(250, 235);
-      ctx.bezierCurveTo(275, 210, 285, 180, 300, 145);
-      ctx.stroke();
+        248,
+        300,
+
+        254,
+        230
+      );
+
+      ctx.bezierCurveTo(
+        265,
+        300,
+
+        267,
+        365,
+
+        274,
+        430
+      );
+
+      ctx.closePath();
+
+      ctx.fill();
+
+
+      /*
+        BRANCHES
+      */
+      drawCurvedBranch(
+        258, 300,
+        220, 265,
+        200, 230,
+        160, 190,
+        10
+      );
+
+      drawCurvedBranch(
+        260, 300,
+        305, 265,
+        325, 230,
+        365, 190,
+        10
+      );
+
+      drawCurvedBranch(
+        258, 270,
+        230, 235,
+        220, 205,
+        210, 160,
+        7
+      );
+
+      drawCurvedBranch(
+        260, 270,
+        290, 235,
+        300, 205,
+        310, 160,
+        7
+      );
+
+      drawCurvedBranch(
+        256, 330,
+        220, 315,
+        190, 300,
+        155, 265,
+        8
+      );
+
+      drawCurvedBranch(
+        264, 330,
+        300, 315,
+        330, 300,
+        365, 265,
+        8
+      );
 
       ctx.restore();
     }
 
+
+    /*
+      ============================================================
+      ANIMATION LOOP
+      ============================================================
+    */
+
+    let frame = 0;
+
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      drawTree();
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
 
-      const time = Date.now() * 0.002;
+      frame++;
 
+      /*
+        Tree growth progress
+      */
+      const growProgress =
+        Math.min(1, frame / 180);
+
+      drawTree(growProgress);
+
+
+      /*
+        DRAW HEART TREE
+      */
       for (const h of hearts) {
-        const sway = Math.sin(time + h.offset) * h.speed;
-        const float = Math.cos(time * 0.8 + h.offset) * h.speed;
+
+        const localProgress =
+          Math.min(
+            1,
+
+            Math.max(
+              0,
+              (frame - h.delay) / 110
+            )
+          );
+
+        /*
+          Smooth growth easing
+        */
+        const ease =
+          1 - Math.pow(1 - localProgress, 3);
+
+        const x =
+          h.startX +
+          (h.x - h.startX) * ease;
+
+        const y =
+          h.startY +
+          (h.y - h.startY) * ease;
+
+        const sway =
+          Math.sin(
+            frame * 0.025 + h.phase
+          ) * h.sway;
 
         drawHeart(
-          h.x + sway,
-          h.y + float,
-          h.size,
+          x + sway,
+          y,
+
+          h.size * ease,
+
           h.colour,
-          h.opacity
+
+          h.opacity * ease,
+
+          h.rotation
+        );
+      }
+
+
+      /*
+        DRAW FALLING HEARTS
+      */
+      for (const f of fallingHearts) {
+
+        f.y += f.speed;
+
+        /*
+          Reset falling heart
+        */
+        if (f.y > 470) {
+
+          f.y = -30;
+
+          f.x =
+            120 + Math.random() * 340;
+        }
+
+        const side =
+          Math.sin(
+            frame * 0.025 + f.phase
+          ) * 12;
+
+        drawHeart(
+          f.x + side,
+          f.y,
+
+          f.size,
+
+          f.colour,
+
+          f.opacity,
+
+          Math.sin(
+            frame * 0.01 + f.phase
+          ) * 0.5
         );
       }
 
       requestAnimationFrame(animate);
     }
 
-    createHearts();
+
+    /*
+      ============================================================
+      START ANIMATION
+      ============================================================
+    */
+
+    createCanopy();
+
     animate();
 
-    const startDate = new Date("2025-05-15T00:00:00");
+
+    /*
+      ============================================================
+      TIMER
+      ============================================================
+    */
+
+    const startDate =
+      new Date("2025-05-15T00:00:00");
 
     function updateTimer() {
-      const now = new Date();
-      const diff = now - startDate;
 
-      const seconds = Math.floor(diff / 1000) % 60;
-      const minutes = Math.floor(diff / (1000 * 60)) % 60;
-      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const now =
+        new Date();
+
+      const diff =
+        now - startDate;
+
+      const seconds =
+        Math.floor(diff / 1000) % 60;
+
+      const minutes =
+        Math.floor(diff / (1000 * 60)) % 60;
+
+      const hours =
+        Math.floor(diff / (1000 * 60 * 60)) % 24;
+
+      const days =
+        Math.floor(diff / (1000 * 60 * 60 * 24));
 
       document.getElementById("counter").textContent =
+
         `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
     }
 
     setInterval(updateTimer, 1000);
+
     updateTimer();
+
   </script>
 
 </body>
