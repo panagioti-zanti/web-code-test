@@ -27,18 +27,20 @@
       position: absolute;
       inset: 0;
       cursor: pointer;
+      z-index: 3;
     }
 
     .text {
       position: absolute;
       left: 35px;
       top: 45px;
-      width: 340px;
+      width: 350px;
       font-size: 22px;
       color: #222;
       opacity: 0;
       transition: opacity 1.5s ease;
       pointer-events: none;
+      z-index: 2;
     }
 
     .timer {
@@ -50,6 +52,7 @@
       opacity: 0;
       transition: opacity 1.5s ease;
       pointer-events: none;
+      z-index: 2;
     }
 
     .show {
@@ -93,7 +96,8 @@
       "#ff4f8b",
       "#ff6b6b",
       "#ff8a80",
-      "#ffcc00"
+      "#ffcc00",
+      "#ffd54f"
     ];
 
     let clicked = false;
@@ -101,15 +105,17 @@
 
     const startHeart = {
       x: 425,
-      y: 180,
-      size: 26
+      y: 170,
+      size: 27
     };
 
     const groundY = 390;
-    let fallingBallY = startHeart.y;
+
+    let ballY = startHeart.y;
+    let ballX = startHeart.x;
 
     let treeX = 425;
-    let targetTreeX = 600;
+    const treeTargetX = 610;
 
     const leaves = [];
     const fallingLeaves = [];
@@ -122,6 +128,10 @@
       return 1 - Math.pow(1 - t, 3);
     }
 
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
     function drawHeart(x, y, size, colour, opacity = 1, rotation = 0) {
       ctx.save();
       ctx.translate(x, y);
@@ -131,8 +141,22 @@
 
       ctx.beginPath();
       ctx.moveTo(0, size * 0.35);
-      ctx.bezierCurveTo(-size, -size * 0.35, -size * 0.6, -size, 0, -size * 0.45);
-      ctx.bezierCurveTo(size * 0.6, -size, size, -size * 0.35, 0, size * 0.35);
+      ctx.bezierCurveTo(
+        -size,
+        -size * 0.35,
+        -size * 0.6,
+        -size,
+        0,
+        -size * 0.45
+      );
+      ctx.bezierCurveTo(
+        size * 0.6,
+        -size,
+        size,
+        -size * 0.35,
+        0,
+        size * 0.35
+      );
       ctx.fill();
 
       ctx.restore();
@@ -144,168 +168,280 @@
 
       ctx.strokeStyle = "#333";
       ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+
       ctx.beginPath();
-      ctx.moveTo(startHeart.x, startHeart.y + 30);
+      ctx.moveTo(startHeart.x, startHeart.y + 35);
       ctx.lineTo(startHeart.x, startHeart.y + 95);
       ctx.stroke();
 
       ctx.fillStyle = "#333";
       ctx.font = "22px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("click here", startHeart.x, startHeart.y + 125);
+      ctx.fillText("click here", startHeart.x, startHeart.y + 130);
     }
 
     function drawGround(progress) {
-      const width = 620 * progress;
+      const width = 620 * easeOutCubic(progress);
 
       ctx.strokeStyle = "#333";
       ctx.lineWidth = 3;
       ctx.lineCap = "round";
 
       ctx.beginPath();
-      ctx.moveTo(425 - width / 2, groundY);
-      ctx.lineTo(425 + width / 2, groundY);
+      ctx.moveTo(startHeart.x - width / 2, groundY);
+      ctx.lineTo(startHeart.x + width / 2, groundY);
       ctx.stroke();
     }
 
     function drawBall(progress) {
-      fallingBallY = startHeart.y + (groundY - startHeart.y - 8) * easeOutCubic(progress);
+      const p = easeOutCubic(progress);
+
+      ballY = startHeart.y + (groundY - startHeart.y - 11) * p;
 
       ctx.fillStyle = "#ff2d75";
       ctx.beginPath();
-      ctx.arc(startHeart.x, fallingBallY, 13, 0, Math.PI * 2);
+      ctx.arc(ballX, ballY, 13, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function branchPath(x, y, commands, progress, widthStart, widthEnd) {
-      ctx.strokeStyle = "#008b80";
-      ctx.lineCap = "round";
+    function drawTaperedBranch(points, progress, startWidth, endWidth) {
+      const segments = 28;
+      const visible = Math.floor(segments * progress);
 
-      const steps = Math.floor(commands.length * progress);
+      for (let i = 0; i < visible; i++) {
+        const t1 = i / segments;
+        const t2 = (i + 1) / segments;
 
-      for (let i = 0; i < steps; i++) {
-        const b = commands[i];
-        const localWidth = widthStart + (widthEnd - widthStart) * (i / commands.length);
+        const p1 = cubicBezier(points, t1);
+        const p2 = cubicBezier(points, t2);
 
-        ctx.lineWidth = localWidth;
+        const width = startWidth + (endWidth - startWidth) * t1;
+
+        ctx.strokeStyle = "#008b80";
+        ctx.lineWidth = width;
+        ctx.lineCap = "round";
+
         ctx.beginPath();
-        ctx.moveTo(x + b[0], y + b[1]);
-        ctx.bezierCurveTo(
-          x + b[2], y + b[3],
-          x + b[4], y + b[5],
-          x + b[6], y + b[7]
-        );
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
     }
 
-    function drawTree(progress) {
-      ctx.save();
+    function cubicBezier(p, t) {
+      const x =
+        Math.pow(1 - t, 3) * p[0].x +
+        3 * Math.pow(1 - t, 2) * t * p[1].x +
+        3 * (1 - t) * Math.pow(t, 2) * p[2].x +
+        Math.pow(t, 3) * p[3].x;
 
+      const y =
+        Math.pow(1 - t, 3) * p[0].y +
+        3 * Math.pow(1 - t, 2) * t * p[1].y +
+        3 * (1 - t) * Math.pow(t, 2) * p[2].y +
+        Math.pow(t, 3) * p[3].y;
+
+      return { x, y };
+    }
+
+    function drawTree(progress) {
       const p = easeOutCubic(progress);
 
-      ctx.strokeStyle = "#008b80";
-      ctx.lineCap = "round";
+      ctx.save();
 
-      ctx.lineWidth = 18;
+      ctx.fillStyle = "#008b80";
+
+      const trunkTopY = groundY - 145 * p;
+
       ctx.beginPath();
-      ctx.moveTo(treeX, groundY);
+      ctx.moveTo(treeX - 13, groundY);
       ctx.bezierCurveTo(
-        treeX - 6,
-        groundY - 55 * p,
-        treeX + 8,
-        groundY - 105 * p,
-        treeX,
-        groundY - 155 * p
+        treeX - 10,
+        groundY - 50 * p,
+        treeX - 5,
+        groundY - 100 * p,
+        treeX - 2,
+        trunkTopY
       );
-      ctx.stroke();
+      ctx.lineTo(treeX + 2, trunkTopY);
+      ctx.bezierCurveTo(
+        treeX + 5,
+        groundY - 100 * p,
+        treeX + 10,
+        groundY - 50 * p,
+        treeX + 13,
+        groundY
+      );
+      ctx.closePath();
+      ctx.fill();
 
-      if (progress > 0.25) {
-        const bp = Math.min(1, (progress - 0.25) / 0.75);
+      if (progress > 0.2) {
+        const branchProgress = clamp((progress - 0.2) / 0.8, 0, 1);
+
+        const baseY = groundY;
 
         const branches = [
-          [0,-85, -35,-115, -60,-145, -95,-175],
-          [0,-85, 35,-115, 60,-145, 95,-175],
-          [0,-125, -25,-155, -35,-190, -45,-225],
-          [0,-125, 25,-155, 35,-190, 45,-225],
-          [0,-55, -45,-70, -75,-90, -115,-120],
-          [0,-55, 45,-70, 75,-90, 115,-120]
+          {
+            points: [
+              { x: treeX, y: baseY - 70 },
+              { x: treeX - 40, y: baseY - 105 },
+              { x: treeX - 95, y: baseY - 145 },
+              { x: treeX - 160, y: baseY - 170 }
+            ],
+            sw: 11,
+            ew: 2.5
+          },
+          {
+            points: [
+              { x: treeX, y: baseY - 85 },
+              { x: treeX - 30, y: baseY - 130 },
+              { x: treeX - 55, y: baseY - 180 },
+              { x: treeX - 85, y: baseY - 230 }
+            ],
+            sw: 9,
+            ew: 2
+          },
+          {
+            points: [
+              { x: treeX, y: baseY - 95 },
+              { x: treeX + 35, y: baseY - 125 },
+              { x: treeX + 65, y: baseY - 160 },
+              { x: treeX + 90, y: baseY - 205 }
+            ],
+            sw: 10,
+            ew: 2
+          },
+          {
+            points: [
+              { x: treeX, y: baseY - 120 },
+              { x: treeX - 20, y: baseY - 155 },
+              { x: treeX - 30, y: baseY - 200 },
+              { x: treeX - 25, y: baseY - 245 }
+            ],
+            sw: 7,
+            ew: 1.5
+          },
+          {
+            points: [
+              { x: treeX, y: baseY - 55 },
+              { x: treeX + 45, y: baseY - 80 },
+              { x: treeX + 85, y: baseY - 115 },
+              { x: treeX + 125, y: baseY - 145 }
+            ],
+            sw: 8,
+            ew: 2
+          }
         ];
 
         for (const b of branches) {
-          ctx.lineWidth = 10;
-          ctx.beginPath();
-          ctx.moveTo(treeX + b[0], groundY + b[1]);
-          ctx.bezierCurveTo(
-            treeX + b[2], groundY + b[3],
-            treeX + b[4], groundY + b[5],
-            treeX + b[6] * bp, groundY + b[7] * bp
+          drawTaperedBranch(
+            b.points,
+            branchProgress,
+            b.sw,
+            b.ew
           );
-          ctx.stroke();
         }
       }
 
       ctx.restore();
     }
 
+    function heartShapePoint(t, scaleX, scaleY, centreX, centreY) {
+      const x =
+        16 * Math.pow(Math.sin(t), 3);
+
+      const y = -(
+        13 * Math.cos(t)
+        - 5 * Math.cos(2 * t)
+        - 2 * Math.cos(3 * t)
+        - Math.cos(4 * t)
+      );
+
+      return {
+        x: centreX + x * scaleX,
+        y: centreY + y * scaleY
+      };
+    }
+
     function createLeaves() {
       leaves.length = 0;
+      fallingLeaves.length = 0;
 
-      for (let i = 0; i < 850; i++) {
+      const canopyCentreX = treeX - 105;
+      const canopyCentreY = groundY - 215;
+
+      for (let i = 0; i < 1050; i++) {
         const t = Math.random() * Math.PI * 2;
-        const r = i < 430 ? 1 : Math.pow(Math.random(), 0.48);
 
-        const xShape = 16 * Math.pow(Math.sin(t), 3);
-        const yShape = -(
-          13 * Math.cos(t)
-          - 5 * Math.cos(2 * t)
-          - 2 * Math.cos(3 * t)
-          - Math.cos(4 * t)
+        const isOutline = i < 420;
+
+        const r = isOutline
+          ? 1
+          : Math.pow(Math.random(), 0.48);
+
+        const p = heartShapePoint(
+          t,
+          9.2 * r,
+          7.0 * r,
+          canopyCentreX,
+          canopyCentreY
         );
 
         leaves.push({
-          x: treeX + xShape * 9.5 * r,
-          y: groundY - 215 + yShape * 7.2 * r,
+          x: p.x + (Math.random() - 0.5) * 18,
+          y: p.y + (Math.random() - 0.5) * 18,
           startX: treeX,
-          startY: groundY - 130,
-          size: 4 + Math.random() * 8,
+          startY: groundY - 125,
+          size: 2.5 + Math.random() * 6,
           colour: randomColour(),
-          delay: Math.random() * 120,
+          opacity: 0.5 + Math.random() * 0.5,
+          delay: Math.random() * 140,
           phase: Math.random() * 100,
-          sway: Math.random() * 1.4,
-          opacity: 0.55 + Math.random() * 0.45,
-          rotation: -0.5 + Math.random()
+          sway: Math.random() * 1.5,
+          rotation: -0.5 + Math.random(),
+          depth: 0.6 + Math.random() * 0.8
         });
       }
 
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 60; i++) {
         fallingLeaves.push({
-          x: treeX - 90 + Math.random() * 180,
-          y: groundY - 260 + Math.random() * 130,
-          size: 5 + Math.random() * 7,
+          x: canopyCentreX - 30 + Math.random() * 210,
+          y: canopyCentreY - 80 + Math.random() * 160,
+          size: 3 + Math.random() * 5,
           colour: randomColour(),
-          speedX: -0.35 - Math.random() * 0.45,
-          speedY: 0.25 + Math.random() * 0.45,
+          speedX: -0.45 - Math.random() * 0.55,
+          speedY: 0.25 + Math.random() * 0.55,
           phase: Math.random() * 100,
-          opacity: 0.45 + Math.random() * 0.35
+          opacity: 0.35 + Math.random() * 0.35,
+          rotation: -0.5 + Math.random()
         });
       }
     }
 
     function drawLeaves(progress) {
       for (const leaf of leaves) {
-        const local = Math.min(1, Math.max(0, (progress * 180 - leaf.delay) / 80));
+        const local = clamp(
+          (progress * 190 - leaf.delay) / 80,
+          0,
+          1
+        );
+
         const e = easeOutCubic(local);
 
-        const x = leaf.startX + (leaf.x - leaf.startX) * e;
-        const y = leaf.startY + (leaf.y - leaf.startY) * e;
+        const x =
+          leaf.startX + (leaf.x - leaf.startX) * e;
 
-        const sway = Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
+        const y =
+          leaf.startY + (leaf.y - leaf.startY) * e;
+
+        const sway =
+          Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
 
         drawHeart(
           x + sway,
           y,
-          leaf.size * e,
+          leaf.size * e * leaf.depth,
           leaf.colour,
           leaf.opacity * e,
           leaf.rotation
@@ -320,25 +456,24 @@
         leaf.x += leaf.speedX;
         leaf.y += leaf.speedY;
 
-        if (leaf.y > groundY + 40 || leaf.x < 300) {
-          leaf.x = treeX - 40 + Math.random() * 150;
-          leaf.y = groundY - 260 + Math.random() * 120;
+        if (leaf.y > groundY + 30 || leaf.x < 270) {
+          leaf.x = treeX - 160 + Math.random() * 230;
+          leaf.y = groundY - 300 + Math.random() * 150;
         }
 
         drawHeart(
-          leaf.x + Math.sin(frame * 0.03 + leaf.phase) * 8,
+          leaf.x + Math.sin(frame * 0.03 + leaf.phase) * 7,
           leaf.y,
           leaf.size,
           leaf.colour,
           leaf.opacity,
-          Math.sin(frame * 0.02 + leaf.phase) * 0.7
+          leaf.rotation + Math.sin(frame * 0.02 + leaf.phase) * 0.7
         );
       }
     }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      frame++;
 
       if (!clicked) {
         drawStartScreen();
@@ -346,14 +481,23 @@
         return;
       }
 
-      const groundProgress = Math.min(1, frame / 80);
-      const ballProgress = Math.min(1, frame / 100);
+      frame++;
+
+      const groundProgress = clamp(frame / 80, 0, 1);
+      const ballProgress = clamp(frame / 95, 0, 1);
 
       drawGround(groundProgress);
       drawBall(ballProgress);
 
-      if (frame > 105) {
-        const treeProgress = Math.min(1, (frame - 105) / 150);
+      if (frame > 95) {
+        const treeProgress = clamp((frame - 95) / 150, 0, 1);
+
+        const moveProgress = clamp((frame - 245) / 130, 0, 1);
+
+        treeX =
+          startHeart.x +
+          (treeTargetX - startHeart.x) *
+          easeOutCubic(moveProgress);
 
         drawTree(treeProgress);
 
@@ -362,16 +506,16 @@
         }
 
         if (treeProgress >= 1) {
-          const moveProgress = Math.min(1, (frame - 255) / 120);
-          treeX = 425 + (targetTreeX - 425) * easeOutCubic(moveProgress);
+          const leafProgress = clamp((frame - 245) / 180, 0, 1);
 
-          if (moveProgress > 0.6) {
-            textBox.classList.add("show");
-            timerBox.classList.add("show");
-          }
+          drawLeaves(leafProgress);
 
-          drawLeaves(Math.min(1, (frame - 255) / 180));
-          drawFallingLeaves(frame > 430);
+          drawFallingLeaves(frame > 440);
+        }
+
+        if (moveProgress > 0.55) {
+          textBox.classList.add("show");
+          timerBox.classList.add("show");
         }
       }
 
@@ -391,18 +535,27 @@
 
     function updateTimer() {
       const now = new Date();
+
       const diff = now - startDate;
 
-      const seconds = Math.floor(diff / 1000) % 60;
-      const minutes = Math.floor(diff / (1000 * 60)) % 60;
-      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const seconds =
+        Math.floor(diff / 1000) % 60;
+
+      const minutes =
+        Math.floor(diff / (1000 * 60)) % 60;
+
+      const hours =
+        Math.floor(diff / (1000 * 60 * 60)) % 24;
+
+      const days =
+        Math.floor(diff / (1000 * 60 * 60 * 24));
 
       document.getElementById("counter").textContent =
         `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
     }
 
     setInterval(updateTimer, 1000);
+
     updateTimer();
   </script>
 
