@@ -1,295 +1,300 @@
-<!DOCTYPE html>
-<html>
+<script>
 
-<head>
-  <title>Heart Tree</title>
+  /*
+    ============================================================
+    HEART TREE GENERATOR
+    ============================================================
 
-  <style>
+    This section creates all the floating heart leaves.
+  */
 
-    /* PAGE */
-    body {
-      margin: 0;
-      height: 100vh;
+  /*
+    Gets the HTML element with id="heart"
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    We store it inside a variable so we can
+    add leaves into it later.
+  */
+  const heart = document.getElementById("heart");
 
-      background: #111;
 
-      font-family: Arial, sans-serif;
-    }
+  /*
+    LOOP
+    ------------------------------------------------------------
 
-    /* MAIN CARD */
-    .card {
-      width: 850px;
-      height: 520px;
+    Creates many heart leaves automatically.
 
-      background: #fff7ef;
+    let i = 0
+      -> starting value
 
-      border-radius: 25px;
+    i < 320
+      -> keep looping until 320 leaves exist
 
-      padding: 35px;
-
-      position: relative;
-
-      overflow: hidden;
-    }
-
-    /* LEFT TEXT */
-    .text {
-      width: 45%;
-
-      font-size: 18px;
-
-      color: #333;
-    }
-
-    /* HEART AREA */
-    .heart {
-      position: absolute;
-
-      right: 70px;
-      top: 40px;
-
-      width: 400px;
-      height: 350px;
-    }
-
-    /* INDIVIDUAL HEART */
-    .leaf {
-      position: absolute;
-
-      background: red;
-
-      transform: rotate(45deg);
-
-      animation: float 3s infinite ease-in-out;
-
-      filter: drop-shadow(0 0 3px rgba(0,0,0,0.15));
-    }
-
-    /* HEART CIRCLES */
-    .leaf::before,
-    .leaf::after {
-      content: "";
-
-      position: absolute;
-
-      width: 100%;
-      height: 100%;
-
-      background: inherit;
-
-      border-radius: 50%;
-    }
-
-    .leaf::before {
-      left: -50%;
-    }
-
-    .leaf::after {
-      top: -50%;
-    }
-
-    /* TREE TRUNK */
-    .trunk {
-      position: absolute;
-
-      right: 235px;
-      top: 310px;
-
-      width: 35px;
-      height: 120px;
-
-      background: teal;
-    }
-
-    /* TIMER */
-    .timer {
-      position: absolute;
-
-      bottom: 45px;
-      left: 35px;
-
-      font-size: 20px;
-
-      color: #333;
-    }
-
-    /* FLOATING ANIMATION */
-    @keyframes float {
-
-      0%, 100% {
-        transform: translateY(0px) rotate(45deg);
-      }
-
-      50% {
-        transform: translateY(-8px) rotate(45deg);
-      }
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <div class="card">
-
-    <div class="text">
-      <p>Para el amor de mi vida:</p>
-
-      <p>
-        Si pudiera elegir un lugar seguro,<br>
-        sería a tu lado.
-      </p>
-    </div>
-
-    <!-- HEART CONTAINER -->
-    <div class="heart" id="heart"></div>
-
-    <!-- TREE TRUNK -->
-    <div class="trunk"></div>
-
-    <!-- TIMER -->
-    <div class="timer">
-      Mi amor por ti comenzó hace...
-      <br><br>
-      <span id="counter"></span>
-    </div>
-
-  </div>
-
-  <script>
+    i++
+      -> add 1 every loop
+  */
+  for (let i = 0; i < 320; i++) {
 
     /*
-      ====================================================
-      HEART TREE GENERATOR
-      ====================================================
-    */
+      Creates a new HTML div element
 
-    const heart = document.getElementById("heart");
+      Equivalent to:
+
+      <div></div>
+    */
+    const leaf = document.createElement("div");
+
 
     /*
-      Create 320 heart particles
+      Adds:
+
+      class="leaf"
+
+      This allows CSS styling to apply.
     */
-    for (let i = 0; i < 320; i++) {
+    leaf.className = "leaf";
 
-      const leaf = document.createElement("div");
 
-      leaf.className = "leaf";
+    /*
+      RANDOM ANGLE
+      ------------------------------------------------------------
 
-      /*
-        Random angle around circle
-      */
-      const t = Math.random() * Math.PI * 2;
+      Math.random()
+        gives a random number between 0 and 1
 
-      /*
-        Distribution control
-      */
-      const r = Math.pow(Math.random(), 0.72);
+      Math.PI
+        is the mathematical constant π
 
-      /*
-        Heart equations
-      */
-      const x =
-        16 * Math.pow(Math.sin(t), 3);
+      * 2
+        gives a full circle in radians
+    */
+    const t = Math.random() * Math.PI * 2;
 
-      const y = -(
-        13 * Math.cos(t)
-        - 5 * Math.cos(2 * t)
-        - 2 * Math.cos(3 * t)
-        - Math.cos(4 * t)
-      );
 
-      /*
-        Positioning
-      */
-      leaf.style.left =
-        170 + x * 8.5 * r + "px";
+    /*
+      RANDOM DISTRIBUTION
+      ------------------------------------------------------------
 
-      leaf.style.top =
-        145 + y * 6.2 * r + "px";
+      This controls HOW leaves spread through the heart.
 
-      /*
-        Random colours
-      */
-      const colours = [
-        "#ff2d75",
-        "#ff0066",
-        "#ffcc00",
-        "#ff6b6b",
-        "#ff1493"
+      Normal random distribution creates messy spacing.
+
+      Using Math.pow changes the probability curve.
+
+      Lower exponent values:
+      -> create denser clustering
+
+      This creates a smoother heart shape.
+    */
+    const r = Math.pow(Math.random(), 0.45);
+
+
+    /*
+      ============================================================
+      HEART EQUATION
+      ============================================================
+
+      These equations generate x/y coordinates
+      forming a mathematical heart shape.
+
+      Commonly used in:
+      - graphics
+      - animations
+      - particle systems
+      - generative art
+    */
+
+    const x =
+      16 * Math.pow(Math.sin(t), 3);
+
+    const y = -(
+      13 * Math.cos(t)
+      - 5 * Math.cos(2 * t)
+      - 2 * Math.cos(3 * t)
+      - Math.cos(4 * t)
+    );
+
+
+    /*
+      ============================================================
+      POSITIONING
+      ============================================================
+
+      We convert the heart equation coordinates
+      into actual screen positions.
+
+      + "px"
+        converts numbers into CSS pixels
+    */
+
+    leaf.style.left =
+      140 + x * 7 * r + "px";
+
+    leaf.style.top =
+      130 + y * 7 * r + "px";
+
+
+    /*
+      ============================================================
+      COLOUR SYSTEM
+      ============================================================
+
+      Array containing possible colours.
+
+      Arrays store multiple values.
+    */
+    const colours = [
+      "#ff2d75",
+      "#ff0066",
+      "#ffcc00",
+      "#ff6b6b",
+      "#ff1493"
+    ];
+
+
+    /*
+      RANDOM COLOUR PICKER
+      ------------------------------------------------------------
+
+      Math.floor removes decimals.
+
+      This randomly selects a colour
+      from the array.
+    */
+    leaf.style.background =
+      colours[
+        Math.floor(Math.random() * colours.length)
       ];
 
-      leaf.style.background =
-        colours[
-          Math.floor(Math.random() * colours.length)
-        ];
-
-      /*
-        Random movement timing
-      */
-      leaf.style.animationDelay =
-        Math.random() * 3 + "s";
-
-      /*
-        Random sizes
-      */
-      const size =
-        10 + Math.random() * 10;
-
-      leaf.style.width = size + "px";
-      leaf.style.height = size + "px";
-
-      /*
-        Slight transparency
-      */
-      leaf.style.opacity =
-        0.7 + Math.random() * 0.3;
-
-      /*
-        Add to page
-      */
-      heart.appendChild(leaf);
-    }
 
     /*
-      ====================================================
-      TIMER
-      ====================================================
+      RANDOM ANIMATION DELAY
+      ------------------------------------------------------------
+
+      Without this:
+      every leaf moves together.
+
+      With random delays:
+      movement looks more natural.
+    */
+    leaf.style.animationDelay =
+      Math.random() * 3 + "s";
+
+
+    /*
+      RANDOM SIZE VARIATION
+      ------------------------------------------------------------
+
+      Creates slightly different leaf sizes
+      so the tree feels more organic.
+    */
+    const size =
+      10 + Math.random() * 10;
+
+    leaf.style.width = size + "px";
+    leaf.style.height = size + "px";
+
+
+    /*
+      ============================================================
+      ADD LEAF TO PAGE
+      ============================================================
+
+      appendChild places the new leaf
+      inside the heart container.
+    */
+    heart.appendChild(leaf);
+  }
+
+
+  /*
+    ============================================================
+    TIMER SYSTEM
+    ============================================================
+  */
+
+  /*
+    Starting date/time
+
+    Change this to whatever date you want.
+  */
+  const startDate =
+    new Date("2025-05-15T00:00:00");
+
+
+  /*
+    FUNCTION
+    ------------------------------------------------------------
+
+    Functions are reusable blocks of code.
+  */
+  function updateTimer() {
+
+    /*
+      Current date/time
+    */
+    const now = new Date();
+
+
+    /*
+      Difference between dates
+
+      Result is in milliseconds.
+    */
+    const diff = now - startDate;
+
+
+    /*
+      ============================================================
+      TIME CONVERSIONS
+      ============================================================
+
+      Converts milliseconds into:
+      - seconds
+      - minutes
+      - hours
+      - days
     */
 
-    const startDate =
-      new Date("2025-05-15T00:00:00");
+    const seconds =
+      Math.floor(diff / 1000) % 60;
 
-    function updateTimer() {
+    const minutes =
+      Math.floor(diff / (1000 * 60)) % 60;
 
-      const now = new Date();
+    const hours =
+      Math.floor(diff / (1000 * 60 * 60)) % 24;
 
-      const diff = now - startDate;
+    const days =
+      Math.floor(diff / (1000 * 60 * 60 * 24));
 
-      const seconds =
-        Math.floor(diff / 1000) % 60;
 
-      const minutes =
-        Math.floor(diff / (1000 * 60)) % 60;
+    /*
+      ============================================================
+      UPDATE HTML TEXT
+      ============================================================
 
-      const hours =
-        Math.floor(diff / (1000 * 60 * 60)) % 24;
+      textContent changes text inside HTML.
+    */
+    document.getElementById("counter").textContent =
 
-      const days =
-        Math.floor(diff / (1000 * 60 * 60 * 24));
+      `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+  }
 
-      document.getElementById("counter").textContent =
-        `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
-    }
 
-    setInterval(updateTimer, 1000);
+  /*
+    ============================================================
+    RUN TIMER EVERY SECOND
+    ============================================================
 
-    updateTimer();
+    1000 milliseconds = 1 second
+  */
+  setInterval(updateTimer, 1000);
 
-  </script>
 
-</body>
-</html>
+  /*
+    Runs immediately once so user does not wait
+    1 second for the first update.
+  */
+  updateTimer();
+
+</script>
