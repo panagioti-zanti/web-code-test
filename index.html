@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<!-- 
+  This tells the browser the file is HTML5.
+  Always place this at the top.
+-->
+
+<html>
+
+<head>
+
+  <!-- 
+    The title appears in the browser tab.
+  -->
+  <title>Love Timer</title>
+
+  <style>
+
+    /* 
+      BODY STYLING
+      ---------------------------------------------------
+      The body is the whole visible page.
+    */
+    body {
+
+      /* Removes default spacing around the page */
+      margin: 0;
+
+      /* Makes the body fill the full screen height */
+      height: 100vh;
+
+      /* Background colour of the page */
+      background: #111;
+
+      /*
+        display:flex enables Flexbox layout.
+
+        Flexbox is commonly used for:
+        - centering things
+        - aligning sections
+        - responsive layouts
+      */
+      display: flex;
+
+      /*
+        Horizontal centering
+      */
+      justify-content: center;
+
+      /*
+        Vertical centering
+      */
+      align-items: center;
+
+      /* Default font for the page */
+      font-family: Arial, sans-serif;
+    }
+
+    /*
+      MAIN CARD / WINDOW
+      ---------------------------------------------------
+      This is the large rounded rectangle.
+    */
+    .card {
+
+      /* Width of the box */
+      width: 850px;
+
+      /* Height of the box */
+      height: 520px;
+
+      /* Background colour */
+      background: #fff7ef;
+
+      /* Rounded corners */
+      border-radius: 25px;
+
+      /* Space inside the card */
+      padding: 35px;
+
+      /*
+        position:relative is VERY important.
+
+        It allows child elements using:
+        position:absolute
+
+        to position themselves relative to THIS card,
+        instead of the entire page.
+      */
+      position: relative;
+
+      /*
+        Prevents things from sticking outside the box.
+      */
+      overflow: hidden;
+    }
+
+    /*
+      LEFT TEXT SECTION
+      ---------------------------------------------------
+    */
+    .text {
+
+      /*
+        Width is limited so the text
+        does not overlap the heart.
+      */
+      width: 45%;
+
+      /* Text size */
+      font-size: 18px;
+
+      /* Text colour */
+      color: #333;
+    }
+
+    /*
+      HEART CONTAINER
+      ---------------------------------------------------
+      This holds all the animated leaves.
+    */
+    .heart {
+
+      /*
+        position:absolute allows exact positioning.
+      */
+      position: absolute;
+
+      /*
+        Distance from right side of parent (.card)
+      */
+      right: 110px;
+
+      /*
+        Distance from top of parent
+      */
+      top: 70px;
+
+      width: 300px;
+      height: 270px;
+    }
+
+    /*
+      INDIVIDUAL HEART LEAVES
+      ---------------------------------------------------
+      Every small heart piece uses this class.
+    */
+    .leaf {
+
+      position: absolute;
+
+      width: 14px;
+      height: 14px;
+
+      /*
+        Background colour changes in JavaScript later.
+      */
+      background: red;
+
+      /*
+        rotate(45deg) turns the square into a diamond.
+
+        Combined with circles below,
+        it creates a heart shape.
+      */
+      transform: rotate(45deg);
+
+      /*
+        Animation settings:
+        float = animation name
+        3s = animation duration
+        infinite = repeats forever
+        ease-in-out = smooth movement
+      */
+      animation: float 3s infinite ease-in-out;
+    }
+
+    /*
+      BEFORE and AFTER create extra shapes
+      without adding more HTML.
+
+      They are commonly used for:
+      - decorations
+      - icons
+      - shapes
+    */
+    .leaf::before,
+    .leaf::after {
+
+      /*
+        Required for pseudo-elements to appear
+      */
+      content: "";
+
+      position: absolute;
+
+      width: 14px;
+      height: 14px;
+
+      /*
+        inherit means:
+        "use the same colour as parent"
+      */
+      background: inherit;
+
+      /*
+        Makes them circles
+      */
+      border-radius: 50%;
+    }
+
+    /*
+      Left circle
+    */
+    .leaf::before {
+      left: -7px;
+    }
+
+    /*
+      Top circle
+    */
+    .leaf::after {
+      top: -7px;
+    }
+
+    /*
+      TREE TRUNK
+      ---------------------------------------------------
+    */
+    .trunk {
+
+      position: absolute;
+
+      right: 235px;
+      top: 310px;
+
+      width: 35px;
+      height: 120px;
+
+      background: teal;
+    }
+
+    /*
+      TIMER SECTION
+      ---------------------------------------------------
+    */
+    .timer {
+
+      position: absolute;
+
+      bottom: 45px;
+      left: 35px;
+
+      font-size: 20px;
+
+      color: #333;
+    }
+
+    /*
+      KEYFRAME ANIMATION
+      ---------------------------------------------------
+
+      Defines HOW things move.
+
+      0%   = animation start
+      50%  = halfway point
+      100% = end
+
+      Here we move the leaf up slightly
+      to create floating motion.
+    */
+    @keyframes float {
+
+      0%, 100% {
+        transform: translateY(0) rotate(45deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(45deg);
+      }
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!--
+    MAIN CARD
+  -->
+  <div class="card">
+
+    <!--
+      TEXT SECTION
+    -->
+    <div class="text">
+
+      <p>Para el amor de mi vida:</p>
+
+      <p>
+        Si pudiera elegir un lugar seguro,
+        sería a tu lado.
+      </p>
+
+    </div>
+
+    <!--
+      HEART CONTAINER
+
+      JavaScript will place all heart leaves here.
+    -->
+    <div class="heart" id="heart"></div>
+
+    <!--
+      TREE TRUNK
+    -->
+    <div class="trunk"></div>
+
+    <!--
+      TIMER DISPLAY
+    -->
+    <div class="timer">
+
+      Mi amor por ti comenzó hace...
+
+      <br><br>
+
+      <!--
+        JavaScript updates this text every second.
+      -->
+      <span id="counter"></span>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    /*
+      JAVASCRIPT SECTION
+      ===================================================
+    */
+
+    /*
+      Finds the HTML element with id="heart"
+
+      We store it inside a variable called heart.
+    */
+    const heart = document.getElementById("heart");
+
+    /*
+      LOOP
+      ---------------------------------------------------
+
+      Creates many leaf elements automatically.
+
+      i++ means:
+      add 1 to i every loop
+    */
+    for (let i = 0; i < 180; i++) {
+
+      /*
+        Creates a new div element
+      */
+      const leaf = document.createElement("div");
+
+      /*
+        Adds class="leaf"
+      */
+      leaf.className = "leaf";
+
+      /*
+        Random angle value
+      */
+      const t = Math.random() * Math.PI * 2;
+
+      /*
+        Random scaling amount
+      */
+      const r = Math.random();
+
+      /*
+        HEART EQUATION
+        ---------------------------------------------------
+
+        These equations generate heart coordinates.
+
+        x and y positions follow a mathematical heart curve.
+
+        sin = sine
+        cos = cosine
+
+        Used frequently in graphics and animation.
+      */
+
+      const x = 16 * Math.pow(Math.sin(t), 3);
+
+      const y = -(
+        13 * Math.cos(t)
+        - 5 * Math.cos(2 * t)
+        - 2 * Math.cos(3 * t)
+        - Math.cos(4 * t)
+      );
+
+      /*
+        Sets position of each leaf
+
+        + "px" converts number into CSS pixels
+      */
+      leaf.style.left = 140 + x * 10 * r + "px";
+
+      leaf.style.top = 120 + y * 10 * r + "px";
+
+      /*
+        Array of possible colours
+      */
+      const colours = [
+        "#ff2d75",
+        "#ff0066",
+        "#ffcc00",
+        "#ff6b6b",
+        "#ff1493"
+      ];
+
+      /*
+        Randomly selects one colour
+      */
+      leaf.style.background =
+        colours[Math.floor(Math.random() * colours.length)];
+
+      /*
+        Random animation timing
+        so all leaves do not move together
+      */
+      leaf.style.animationDelay =
+        Math.random() * 3 + "s";
+
+      /*
+        Adds the leaf into the heart container
+      */
+      heart.appendChild(leaf);
+    }
+
+    /*
+      TIMER SYSTEM
+      ===================================================
+    */
+
+    /*
+      Starting date/time
+
+      Change this to anything you want.
+    */
+    const startDate =
+      new Date("2025-05-15T00:00:00");
+
+    /*
+      FUNCTION
+      ---------------------------------------------------
+
+      Functions are reusable blocks of code.
+    */
+    function updateTimer() {
+
+      /*
+        Current time
+      */
+      const now = new Date();
+
+      /*
+        Difference in milliseconds
+      */
+      const diff = now - startDate;
+
+      /*
+        Converts milliseconds into:
+        seconds
+        minutes
+        hours
+        days
+      */
+
+      const seconds =
+        Math.floor(diff / 1000) % 60;
+
+      const minutes =
+        Math.floor(diff / (1000 * 60)) % 60;
+
+      const hours =
+        Math.floor(diff / (1000 * 60 * 60)) % 24;
+
+      const days =
+        Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      /*
+        Updates the HTML text
+      */
+      document.getElementById("counter").textContent =
+
+        `${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+    }
+
+    /*
+      Runs updateTimer every 1000ms
+
+      1000ms = 1 second
+    */
+    setInterval(updateTimer, 1000);
+
+    /*
+      Runs immediately once
+      so user does not wait 1 second initially
+    */
+    updateTimer();
+
+  </script>
+
+</body>
+
+</html>
