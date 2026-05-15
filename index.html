@@ -4,67 +4,49 @@
   <title>Heart Tree</title>
 
   <style>
-
     body {
       margin: 0;
       height: 100vh;
       background: #111;
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       font-family: Arial, sans-serif;
     }
 
     .card {
       width: 850px;
       height: 520px;
-
       background: #fff7ef;
-
       border-radius: 25px;
-
       position: relative;
-
       overflow: hidden;
     }
 
     .text {
       position: absolute;
-
-      left: 35px;
-      top: 40px;
-
-      width: 340px;
-
-      font-size: 18px;
-
+      left: 30px;
+      top: 45px;
+      width: 350px;
+      font-size: 22px;
       color: #222;
-
       z-index: 2;
     }
 
     canvas {
       position: absolute;
-
       right: 10px;
-      top: 0;
+      top: 5px;
     }
 
     .timer {
       position: absolute;
-
-      left: 35px;
+      left: 30px;
       bottom: 45px;
-
-      font-size: 18px;
-
+      font-size: 22px;
       color: #333;
-
       z-index: 2;
     }
-
   </style>
 </head>
 
@@ -73,52 +55,26 @@
   <div class="card">
 
     <div class="text">
-
       <p>To the love of my life:</p>
-
       <p>
         If I could choose one safe place,<br>
         it would be beside you.
       </p>
-
     </div>
 
-    <canvas id="treeCanvas"
-            width="520"
-            height="470"></canvas>
+    <canvas id="treeCanvas" width="520" height="470"></canvas>
 
     <div class="timer">
-
       My love for you began...
-
       <br><br>
-
       <span id="counter"></span>
-
     </div>
 
   </div>
 
   <script>
-
-    /*
-      ============================================================
-      CANVAS SETUP
-      ============================================================
-    */
-
-    const canvas =
-      document.getElementById("treeCanvas");
-
-    const ctx =
-      canvas.getContext("2d");
-
-
-    /*
-      ============================================================
-      COLOURS
-      ============================================================
-    */
+    const canvas = document.getElementById("treeCanvas");
+    const ctx = canvas.getContext("2d");
 
     const colours = [
       "#ff0066",
@@ -126,532 +82,188 @@
       "#ff4f8b",
       "#ff6b6b",
       "#ff8a80",
-      "#ffcc00",
-      "#ffd84d"
+      "#ffcc00"
     ];
-
-
-    /*
-      ============================================================
-      STORAGE ARRAYS
-      ============================================================
-    */
 
     const hearts = [];
 
-    const fallingHearts = [];
-
-
-    /*
-      ============================================================
-      RANDOM COLOUR
-      ============================================================
-    */
-
     function randomColour() {
-
-      return colours[
-        Math.floor(
-          Math.random() * colours.length
-        )
-      ];
+      return colours[Math.floor(Math.random() * colours.length)];
     }
 
-
-    /*
-      ============================================================
-      DRAW HEART
-      ============================================================
-
-      Draws a heart shape directly onto canvas.
-    */
-
-    function drawHeart(
-      x,
-      y,
-      size,
-      colour,
-      opacity,
-      rotation
-    ) {
-
+    function drawHeart(x, y, size, colour, opacity, rotation) {
       ctx.save();
-
       ctx.translate(x, y);
-
       ctx.rotate(rotation);
-
       ctx.globalAlpha = opacity;
-
       ctx.fillStyle = colour;
 
       ctx.beginPath();
-
       ctx.moveTo(0, size * 0.35);
-
-      ctx.bezierCurveTo(
-        -size,
-        -size * 0.35,
-
-        -size * 0.55,
-        -size,
-
-        0,
-        -size * 0.45
-      );
-
-      ctx.bezierCurveTo(
-        size * 0.55,
-        -size,
-
-        size,
-        -size * 0.35,
-
-        0,
-        size * 0.35
-      );
-
+      ctx.bezierCurveTo(-size, -size * 0.35, -size * 0.6, -size, 0, -size * 0.45);
+      ctx.bezierCurveTo(size * 0.6, -size, size, -size * 0.35, 0, size * 0.35);
       ctx.fill();
 
       ctx.restore();
-
       ctx.globalAlpha = 1;
     }
 
+    function heartShapePoint(t, scaleX, scaleY) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
 
-    /*
-      ============================================================
-      CREATE TREE CANOPY
-      ============================================================
-    */
+      const y = -(
+        13 * Math.cos(t)
+        - 5 * Math.cos(2 * t)
+        - 2 * Math.cos(3 * t)
+        - Math.cos(4 * t)
+      );
 
-    function createCanopy() {
+      return {
+        x: 260 + x * scaleX,
+        y: 170 + y * scaleY
+      };
+    }
 
+    function createHeartTree() {
       /*
-        MAIN HEART TREE
+        Outline hearts
       */
-      for (let i = 0; i < 1100; i++) {
-
-        const t =
-          Math.random() * Math.PI * 2;
-
-        /*
-          Controls distribution density
-        */
-        const r =
-          Math.pow(Math.random(), 0.58);
-
-        /*
-          HEART EQUATION
-        */
-        const xShape =
-          16 * Math.pow(Math.sin(t), 3);
-
-        const yShape = -(
-          13 * Math.cos(t)
-          - 5 * Math.cos(2 * t)
-          - 2 * Math.cos(3 * t)
-          - Math.cos(4 * t)
-        );
+      for (let i = 0; i < 430; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const p = heartShapePoint(t, 12.2, 9.6);
 
         hearts.push({
-
-          /*
-            FINAL POSITION
-          */
-          x:
-            260 + xShape * 9.2 * r,
-
-          y:
-            160 + yShape * 7.4 * r,
-
-          /*
-            START POSITION
-            (growing from trunk)
-          */
+          x: p.x + (Math.random() - 0.5) * 18,
+          y: p.y + (Math.random() - 0.5) * 18,
           startX: 260,
           startY: 360,
-
-          size:
-            3.5 + Math.random() * 8.5,
-
-          colour:
-            randomColour(),
-
-          opacity:
-            0.55 + Math.random() * 0.45,
-
-          /*
-            Delays create bloom effect
-          */
-          delay:
-            Math.random() * 140,
-
-          sway:
-            Math.random() * 1.8,
-
-          phase:
-            Math.random() * 100,
-
-          rotation:
-            -0.4 + Math.random() * 0.8
+          size: 6 + Math.random() * 9,
+          colour: randomColour(),
+          opacity: 0.75 + Math.random() * 0.25,
+          delay: Math.random() * 120,
+          phase: Math.random() * 100,
+          sway: Math.random() * 1.5,
+          rotation: -0.5 + Math.random()
         });
       }
 
-
       /*
-        FALLING HEARTS
+        Inner fill hearts
       */
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 360; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const r = Math.pow(Math.random(), 0.45);
+        const p = heartShapePoint(t, 12.2 * r, 9.6 * r);
 
-        fallingHearts.push({
-
-          x:
-            120 + Math.random() * 340,
-
-          y:
-            -Math.random() * 450,
-
-          size:
-            5 + Math.random() * 8,
-
-          speed:
-            0.25 + Math.random() * 0.6,
-
-          colour:
-            randomColour(),
-
-          phase:
-            Math.random() * 100,
-
-          opacity:
-            0.45 + Math.random() * 0.35
+        hearts.push({
+          x: p.x + (Math.random() - 0.5) * 10,
+          y: p.y + (Math.random() - 0.5) * 10,
+          startX: 260,
+          startY: 360,
+          size: 4 + Math.random() * 8,
+          colour: randomColour(),
+          opacity: 0.55 + Math.random() * 0.35,
+          delay: Math.random() * 140,
+          phase: Math.random() * 100,
+          sway: Math.random() * 1.2,
+          rotation: -0.5 + Math.random()
         });
       }
     }
 
-
-    /*
-      ============================================================
-      DRAW CURVED BRANCH
-      ============================================================
-    */
-
-    function drawCurvedBranch(
-      startX,
-      startY,
-
-      cp1X,
-      cp1Y,
-
-      cp2X,
-      cp2Y,
-
-      endX,
-      endY,
-
-      width
-    ) {
-
+    function drawBranch(startX, startY, cp1X, cp1Y, cp2X, cp2Y, endX, endY, width) {
       ctx.beginPath();
-
       ctx.moveTo(startX, startY);
-
-      ctx.bezierCurveTo(
-        cp1X,
-        cp1Y,
-
-        cp2X,
-        cp2Y,
-
-        endX,
-        endY
-      );
-
+      ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
       ctx.lineWidth = width;
-
-      ctx.strokeStyle = "#008b80";
-
+      ctx.strokeStyle = "#009688";
       ctx.lineCap = "round";
-
       ctx.stroke();
     }
 
-
-    /*
-      ============================================================
-      DRAW TREE
-      ============================================================
-    */
-
     function drawTree(progress) {
-
       ctx.save();
-
-      ctx.globalAlpha =
-        Math.min(1, progress * 1.5);
-
-      ctx.fillStyle = "#008b80";
-
+      ctx.globalAlpha = progress;
 
       /*
-        TREE TRUNK
+        Main thin trunk
       */
+      ctx.strokeStyle = "#009688";
+      ctx.lineWidth = 15;
+      ctx.lineCap = "round";
+
       ctx.beginPath();
-
-      ctx.moveTo(245, 430);
-
-      ctx.bezierCurveTo(
-        250,
-        365,
-
-        248,
-        300,
-
-        254,
-        230
-      );
-
-      ctx.bezierCurveTo(
-        265,
-        300,
-
-        267,
-        365,
-
-        274,
-        430
-      );
-
-      ctx.closePath();
-
-      ctx.fill();
-
+      ctx.moveTo(260, 430);
+      ctx.bezierCurveTo(258, 390, 260, 350, 260, 310);
+      ctx.stroke();
 
       /*
-        BRANCHES
+        Inner branches
       */
-      drawCurvedBranch(
-        258, 300,
-        220, 265,
-        200, 230,
-        160, 190,
-        10
-      );
+      drawBranch(260, 325, 230, 290, 205, 250, 175, 210, 9);
+      drawBranch(260, 325, 290, 290, 315, 250, 345, 210, 9);
 
-      drawCurvedBranch(
-        260, 300,
-        305, 265,
-        325, 230,
-        365, 190,
-        10
-      );
+      drawBranch(260, 300, 235, 260, 230, 220, 220, 175, 7);
+      drawBranch(260, 300, 285, 260, 295, 220, 305, 175, 7);
 
-      drawCurvedBranch(
-        258, 270,
-        230, 235,
-        220, 205,
-        210, 160,
-        7
-      );
-
-      drawCurvedBranch(
-        260, 270,
-        290, 235,
-        300, 205,
-        310, 160,
-        7
-      );
-
-      drawCurvedBranch(
-        256, 330,
-        220, 315,
-        190, 300,
-        155, 265,
-        8
-      );
-
-      drawCurvedBranch(
-        264, 330,
-        300, 315,
-        330, 300,
-        365, 265,
-        8
-      );
+      drawBranch(260, 345, 230, 330, 200, 305, 165, 280, 7);
+      drawBranch(260, 345, 290, 330, 320, 305, 355, 280, 7);
 
       ctx.restore();
     }
-
-
-    /*
-      ============================================================
-      ANIMATION LOOP
-      ============================================================
-    */
 
     let frame = 0;
 
     function animate() {
-
-      ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       frame++;
 
-      /*
-        Tree growth progress
-      */
-      const growProgress =
-        Math.min(1, frame / 180);
+      const treeProgress = Math.min(1, frame / 100);
+      drawTree(treeProgress);
 
-      drawTree(growProgress);
-
-
-      /*
-        DRAW HEART TREE
-      */
       for (const h of hearts) {
+        const progress = Math.min(1, Math.max(0, (frame - h.delay) / 100));
+        const ease = 1 - Math.pow(1 - progress, 3);
 
-        const localProgress =
-          Math.min(
-            1,
+        const x = h.startX + (h.x - h.startX) * ease;
+        const y = h.startY + (h.y - h.startY) * ease;
 
-            Math.max(
-              0,
-              (frame - h.delay) / 110
-            )
-          );
-
-        /*
-          Smooth growth easing
-        */
-        const ease =
-          1 - Math.pow(1 - localProgress, 3);
-
-        const x =
-          h.startX +
-          (h.x - h.startX) * ease;
-
-        const y =
-          h.startY +
-          (h.y - h.startY) * ease;
-
-        const sway =
-          Math.sin(
-            frame * 0.025 + h.phase
-          ) * h.sway;
+        const sway = Math.sin(frame * 0.025 + h.phase) * h.sway;
 
         drawHeart(
           x + sway,
           y,
-
           h.size * ease,
-
           h.colour,
-
           h.opacity * ease,
-
           h.rotation
-        );
-      }
-
-
-      /*
-        DRAW FALLING HEARTS
-      */
-      for (const f of fallingHearts) {
-
-        f.y += f.speed;
-
-        /*
-          Reset falling heart
-        */
-        if (f.y > 470) {
-
-          f.y = -30;
-
-          f.x =
-            120 + Math.random() * 340;
-        }
-
-        const side =
-          Math.sin(
-            frame * 0.025 + f.phase
-          ) * 12;
-
-        drawHeart(
-          f.x + side,
-          f.y,
-
-          f.size,
-
-          f.colour,
-
-          f.opacity,
-
-          Math.sin(
-            frame * 0.01 + f.phase
-          ) * 0.5
         );
       }
 
       requestAnimationFrame(animate);
     }
 
-
-    /*
-      ============================================================
-      START ANIMATION
-      ============================================================
-    */
-
-    createCanopy();
-
+    createHeartTree();
     animate();
 
-
-    /*
-      ============================================================
-      TIMER
-      ============================================================
-    */
-
-    const startDate =
-      new Date("2025-05-15T00:00:00");
+    const startDate = new Date("2025-05-15T00:00:00");
 
     function updateTimer() {
+      const now = new Date();
+      const diff = now - startDate;
 
-      const now =
-        new Date();
-
-      const diff =
-        now - startDate;
-
-      const seconds =
-        Math.floor(diff / 1000) % 60;
-
-      const minutes =
-        Math.floor(diff / (1000 * 60)) % 60;
-
-      const hours =
-        Math.floor(diff / (1000 * 60 * 60)) % 24;
-
-      const days =
-        Math.floor(diff / (1000 * 60 * 60 * 24));
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
       document.getElementById("counter").textContent =
-
         `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
     }
 
     setInterval(updateTimer, 1000);
-
     updateTimer();
-
   </script>
 
 </body>
