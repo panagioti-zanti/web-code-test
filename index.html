@@ -23,29 +23,37 @@
       overflow: hidden;
     }
 
-    .text {
-      position: absolute;
-      left: 30px;
-      top: 45px;
-      width: 350px;
-      font-size: 22px;
-      color: #222;
-      z-index: 2;
-    }
-
     canvas {
       position: absolute;
-      right: 10px;
-      top: 5px;
+      inset: 0;
+      cursor: pointer;
+    }
+
+    .text {
+      position: absolute;
+      left: 35px;
+      top: 45px;
+      width: 340px;
+      font-size: 22px;
+      color: #222;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
     }
 
     .timer {
       position: absolute;
-      left: 30px;
+      left: 35px;
       bottom: 45px;
       font-size: 22px;
       color: #333;
-      z-index: 2;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+    }
+
+    .show {
+      opacity: 1;
     }
   </style>
 </head>
@@ -54,7 +62,7 @@
 
   <div class="card">
 
-    <div class="text">
+    <div class="text" id="messageText">
       <p>To the love of my life:</p>
       <p>
         If I could choose one safe place,<br>
@@ -62,19 +70,22 @@
       </p>
     </div>
 
-    <canvas id="treeCanvas" width="520" height="470"></canvas>
-
-    <div class="timer">
+    <div class="timer" id="timerBox">
       My love for you began...
       <br><br>
       <span id="counter"></span>
     </div>
 
+    <canvas id="canvas" width="850" height="520"></canvas>
+
   </div>
 
   <script>
-    const canvas = document.getElementById("treeCanvas");
+    const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
+
+    const textBox = document.getElementById("messageText");
+    const timerBox = document.getElementById("timerBox");
 
     const colours = [
       "#ff0066",
@@ -85,13 +96,33 @@
       "#ffcc00"
     ];
 
-    const hearts = [];
+    let clicked = false;
+    let frame = 0;
+
+    const startHeart = {
+      x: 425,
+      y: 180,
+      size: 26
+    };
+
+    const groundY = 390;
+    let fallingBallY = startHeart.y;
+
+    let treeX = 425;
+    let targetTreeX = 600;
+
+    const leaves = [];
+    const fallingLeaves = [];
 
     function randomColour() {
       return colours[Math.floor(Math.random() * colours.length)];
     }
 
-    function drawHeart(x, y, size, colour, opacity, rotation) {
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function drawHeart(x, y, size, colour, opacity = 1, rotation = 0) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(rotation);
@@ -108,143 +139,252 @@
       ctx.globalAlpha = 1;
     }
 
-    function heartShapePoint(t, scaleX, scaleY) {
-      const x = 16 * Math.pow(Math.sin(t), 3);
+    function drawStartScreen() {
+      drawHeart(startHeart.x, startHeart.y, startHeart.size, "#ff2d75");
 
-      const y = -(
-        13 * Math.cos(t)
-        - 5 * Math.cos(2 * t)
-        - 2 * Math.cos(3 * t)
-        - Math.cos(4 * t)
-      );
-
-      return {
-        x: 260 + x * scaleX,
-        y: 170 + y * scaleY
-      };
-    }
-
-    function createHeartTree() {
-      /*
-        Outline hearts
-      */
-      for (let i = 0; i < 430; i++) {
-        const t = Math.random() * Math.PI * 2;
-        const p = heartShapePoint(t, 12.2, 9.6);
-
-        hearts.push({
-          x: p.x + (Math.random() - 0.5) * 18,
-          y: p.y + (Math.random() - 0.5) * 18,
-          startX: 260,
-          startY: 360,
-          size: 6 + Math.random() * 9,
-          colour: randomColour(),
-          opacity: 0.75 + Math.random() * 0.25,
-          delay: Math.random() * 120,
-          phase: Math.random() * 100,
-          sway: Math.random() * 1.5,
-          rotation: -0.5 + Math.random()
-        });
-      }
-
-      /*
-        Inner fill hearts
-      */
-      for (let i = 0; i < 360; i++) {
-        const t = Math.random() * Math.PI * 2;
-        const r = Math.pow(Math.random(), 0.45);
-        const p = heartShapePoint(t, 12.2 * r, 9.6 * r);
-
-        hearts.push({
-          x: p.x + (Math.random() - 0.5) * 10,
-          y: p.y + (Math.random() - 0.5) * 10,
-          startX: 260,
-          startY: 360,
-          size: 4 + Math.random() * 8,
-          colour: randomColour(),
-          opacity: 0.55 + Math.random() * 0.35,
-          delay: Math.random() * 140,
-          phase: Math.random() * 100,
-          sway: Math.random() * 1.2,
-          rotation: -0.5 + Math.random()
-        });
-      }
-    }
-
-    function drawBranch(startX, startY, cp1X, cp1Y, cp2X, cp2Y, endX, endY, width) {
+      ctx.strokeStyle = "#333";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
-      ctx.lineWidth = width;
-      ctx.strokeStyle = "#009688";
-      ctx.lineCap = "round";
+      ctx.moveTo(startHeart.x, startHeart.y + 30);
+      ctx.lineTo(startHeart.x, startHeart.y + 95);
       ctx.stroke();
+
+      ctx.fillStyle = "#333";
+      ctx.font = "22px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("click here", startHeart.x, startHeart.y + 125);
+    }
+
+    function drawGround(progress) {
+      const width = 620 * progress;
+
+      ctx.strokeStyle = "#333";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+
+      ctx.beginPath();
+      ctx.moveTo(425 - width / 2, groundY);
+      ctx.lineTo(425 + width / 2, groundY);
+      ctx.stroke();
+    }
+
+    function drawBall(progress) {
+      fallingBallY = startHeart.y + (groundY - startHeart.y - 8) * easeOutCubic(progress);
+
+      ctx.fillStyle = "#ff2d75";
+      ctx.beginPath();
+      ctx.arc(startHeart.x, fallingBallY, 13, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function branchPath(x, y, commands, progress, widthStart, widthEnd) {
+      ctx.strokeStyle = "#008b80";
+      ctx.lineCap = "round";
+
+      const steps = Math.floor(commands.length * progress);
+
+      for (let i = 0; i < steps; i++) {
+        const b = commands[i];
+        const localWidth = widthStart + (widthEnd - widthStart) * (i / commands.length);
+
+        ctx.lineWidth = localWidth;
+        ctx.beginPath();
+        ctx.moveTo(x + b[0], y + b[1]);
+        ctx.bezierCurveTo(
+          x + b[2], y + b[3],
+          x + b[4], y + b[5],
+          x + b[6], y + b[7]
+        );
+        ctx.stroke();
+      }
     }
 
     function drawTree(progress) {
       ctx.save();
-      ctx.globalAlpha = progress;
 
-      /*
-        Main thin trunk
-      */
-      ctx.strokeStyle = "#009688";
-      ctx.lineWidth = 15;
+      const p = easeOutCubic(progress);
+
+      ctx.strokeStyle = "#008b80";
       ctx.lineCap = "round";
 
+      ctx.lineWidth = 18;
       ctx.beginPath();
-      ctx.moveTo(260, 430);
-      ctx.bezierCurveTo(258, 390, 260, 350, 260, 310);
+      ctx.moveTo(treeX, groundY);
+      ctx.bezierCurveTo(
+        treeX - 6,
+        groundY - 55 * p,
+        treeX + 8,
+        groundY - 105 * p,
+        treeX,
+        groundY - 155 * p
+      );
       ctx.stroke();
 
-      /*
-        Inner branches
-      */
-      drawBranch(260, 325, 230, 290, 205, 250, 175, 210, 9);
-      drawBranch(260, 325, 290, 290, 315, 250, 345, 210, 9);
+      if (progress > 0.25) {
+        const bp = Math.min(1, (progress - 0.25) / 0.75);
 
-      drawBranch(260, 300, 235, 260, 230, 220, 220, 175, 7);
-      drawBranch(260, 300, 285, 260, 295, 220, 305, 175, 7);
+        const branches = [
+          [0,-85, -35,-115, -60,-145, -95,-175],
+          [0,-85, 35,-115, 60,-145, 95,-175],
+          [0,-125, -25,-155, -35,-190, -45,-225],
+          [0,-125, 25,-155, 35,-190, 45,-225],
+          [0,-55, -45,-70, -75,-90, -115,-120],
+          [0,-55, 45,-70, 75,-90, 115,-120]
+        ];
 
-      drawBranch(260, 345, 230, 330, 200, 305, 165, 280, 7);
-      drawBranch(260, 345, 290, 330, 320, 305, 355, 280, 7);
+        for (const b of branches) {
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.moveTo(treeX + b[0], groundY + b[1]);
+          ctx.bezierCurveTo(
+            treeX + b[2], groundY + b[3],
+            treeX + b[4], groundY + b[5],
+            treeX + b[6] * bp, groundY + b[7] * bp
+          );
+          ctx.stroke();
+        }
+      }
 
       ctx.restore();
     }
 
-    let frame = 0;
+    function createLeaves() {
+      leaves.length = 0;
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < 850; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const r = i < 430 ? 1 : Math.pow(Math.random(), 0.48);
 
-      frame++;
+        const xShape = 16 * Math.pow(Math.sin(t), 3);
+        const yShape = -(
+          13 * Math.cos(t)
+          - 5 * Math.cos(2 * t)
+          - 2 * Math.cos(3 * t)
+          - Math.cos(4 * t)
+        );
 
-      const treeProgress = Math.min(1, frame / 100);
-      drawTree(treeProgress);
+        leaves.push({
+          x: treeX + xShape * 9.5 * r,
+          y: groundY - 215 + yShape * 7.2 * r,
+          startX: treeX,
+          startY: groundY - 130,
+          size: 4 + Math.random() * 8,
+          colour: randomColour(),
+          delay: Math.random() * 120,
+          phase: Math.random() * 100,
+          sway: Math.random() * 1.4,
+          opacity: 0.55 + Math.random() * 0.45,
+          rotation: -0.5 + Math.random()
+        });
+      }
 
-      for (const h of hearts) {
-        const progress = Math.min(1, Math.max(0, (frame - h.delay) / 100));
-        const ease = 1 - Math.pow(1 - progress, 3);
+      for (let i = 0; i < 35; i++) {
+        fallingLeaves.push({
+          x: treeX - 90 + Math.random() * 180,
+          y: groundY - 260 + Math.random() * 130,
+          size: 5 + Math.random() * 7,
+          colour: randomColour(),
+          speedX: -0.35 - Math.random() * 0.45,
+          speedY: 0.25 + Math.random() * 0.45,
+          phase: Math.random() * 100,
+          opacity: 0.45 + Math.random() * 0.35
+        });
+      }
+    }
 
-        const x = h.startX + (h.x - h.startX) * ease;
-        const y = h.startY + (h.y - h.startY) * ease;
+    function drawLeaves(progress) {
+      for (const leaf of leaves) {
+        const local = Math.min(1, Math.max(0, (progress * 180 - leaf.delay) / 80));
+        const e = easeOutCubic(local);
 
-        const sway = Math.sin(frame * 0.025 + h.phase) * h.sway;
+        const x = leaf.startX + (leaf.x - leaf.startX) * e;
+        const y = leaf.startY + (leaf.y - leaf.startY) * e;
+
+        const sway = Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
 
         drawHeart(
           x + sway,
           y,
-          h.size * ease,
-          h.colour,
-          h.opacity * ease,
-          h.rotation
+          leaf.size * e,
+          leaf.colour,
+          leaf.opacity * e,
+          leaf.rotation
         );
+      }
+    }
+
+    function drawFallingLeaves(active) {
+      if (!active) return;
+
+      for (const leaf of fallingLeaves) {
+        leaf.x += leaf.speedX;
+        leaf.y += leaf.speedY;
+
+        if (leaf.y > groundY + 40 || leaf.x < 300) {
+          leaf.x = treeX - 40 + Math.random() * 150;
+          leaf.y = groundY - 260 + Math.random() * 120;
+        }
+
+        drawHeart(
+          leaf.x + Math.sin(frame * 0.03 + leaf.phase) * 8,
+          leaf.y,
+          leaf.size,
+          leaf.colour,
+          leaf.opacity,
+          Math.sin(frame * 0.02 + leaf.phase) * 0.7
+        );
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frame++;
+
+      if (!clicked) {
+        drawStartScreen();
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      const groundProgress = Math.min(1, frame / 80);
+      const ballProgress = Math.min(1, frame / 100);
+
+      drawGround(groundProgress);
+      drawBall(ballProgress);
+
+      if (frame > 105) {
+        const treeProgress = Math.min(1, (frame - 105) / 150);
+
+        drawTree(treeProgress);
+
+        if (treeProgress >= 1 && leaves.length === 0) {
+          createLeaves();
+        }
+
+        if (treeProgress >= 1) {
+          const moveProgress = Math.min(1, (frame - 255) / 120);
+          treeX = 425 + (targetTreeX - 425) * easeOutCubic(moveProgress);
+
+          if (moveProgress > 0.6) {
+            textBox.classList.add("show");
+            timerBox.classList.add("show");
+          }
+
+          drawLeaves(Math.min(1, (frame - 255) / 180));
+          drawFallingLeaves(frame > 430);
+        }
       }
 
       requestAnimationFrame(animate);
     }
 
-    createHeartTree();
+    canvas.addEventListener("click", function () {
+      if (!clicked) {
+        clicked = true;
+        frame = 0;
+      }
+    });
+
     animate();
 
     const startDate = new Date("2025-05-15T00:00:00");
