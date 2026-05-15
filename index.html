@@ -106,9 +106,9 @@
   const groundY = 390;
 
   const startHeart = {
-    x: 150,
-    y: 125,
-    size: 22
+    x: 75,
+    y: 55,
+    size: 20
   };
 
   const startX = 425;
@@ -174,14 +174,14 @@
     ctx.lineCap = "round";
 
     ctx.beginPath();
-    ctx.moveTo(startHeart.x + 22, startHeart.y + 8);
-    ctx.lineTo(startHeart.x + 75, startHeart.y + 8);
+    ctx.moveTo(startHeart.x + 18, startHeart.y + 5);
+    ctx.lineTo(startHeart.x + 82, startHeart.y + 5);
     ctx.stroke();
 
     ctx.fillStyle = "#8b1e1e";
     ctx.font = "12px Arial";
     ctx.textAlign = "left";
-    ctx.fillText("click here", startHeart.x + 32, startHeart.y + 3);
+    ctx.fillText("click here", startHeart.x + 30, startHeart.y + 1);
   }
 
   function drawGround(progress) {
@@ -396,8 +396,11 @@
       const local = clamp((progress * 170 - leaf.delay) / 80, 0, 1);
       const e = easeOutCubic(local);
 
+      const leafFollowAmount = 0.78;
+
       const x =
-        treeX +
+        startX +
+        (treeX - startX) * leafFollowAmount +
         leaf.startBaseX +
         (leaf.baseX - leaf.startBaseX) * e;
 
@@ -431,7 +434,10 @@
       }
 
       drawHeart(
-        treeX + leaf.baseX + Math.sin(frame * 0.03 + leaf.phase) * 7,
+        startX +
+        (treeX - startX) * 0.78 +
+        leaf.baseX +
+        Math.sin(frame * 0.03 + leaf.phase) * 7,
         leaf.y,
         leaf.size,
         leaf.colour,
