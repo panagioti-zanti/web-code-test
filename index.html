@@ -19,119 +19,33 @@
       height: 520px;
       background: #fff7ef;
       border-radius: 25px;
-      padding: 35px;
       position: relative;
       overflow: hidden;
     }
 
     .text {
-      width: 40%;
+      position: absolute;
+      left: 35px;
+      top: 40px;
+      width: 330px;
       font-size: 18px;
       color: #222;
+      z-index: 2;
     }
 
-    .heart {
+    canvas {
       position: absolute;
-      right: 75px;
-      top: 35px;
-      width: 420px;
-      height: 360px;
-    }
-
-    .leaf {
-      position: absolute;
-      width: var(--size);
-      height: var(--size);
-      background: red;
-      transform: rotate(45deg);
-      animation: float 3s infinite ease-in-out;
-    }
-
-    .leaf::before,
-    .leaf::after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: inherit;
-      border-radius: 50%;
-    }
-
-    .leaf::before {
-      left: -50%;
-    }
-
-    .leaf::after {
-      top: -50%;
-    }
-
-    .tree {
-      position: absolute;
-      right: 230px;
-      top: 235px;
-      width: 130px;
-      height: 230px;
-    }
-
-    .trunk {
-      position: absolute;
-      left: 48px;
-      top: 80px;
-      width: 38px;
-      height: 145px;
-      background: linear-gradient(to right, #007f78, #009688, #006b64);
-      clip-path: polygon(35% 0%, 65% 0%, 85% 100%, 15% 100%);
-    }
-
-    .branch {
-      position: absolute;
-      width: 12px;
-      height: 100px;
-      background: #008b80;
-      border-radius: 50%;
-      transform-origin: bottom center;
-    }
-
-    .branch-left-one {
-      left: 38px;
-      top: 40px;
-      transform: rotate(-45deg);
-    }
-
-    .branch-left-two {
-      left: 45px;
-      top: 20px;
-      transform: rotate(-25deg);
-    }
-
-    .branch-right-one {
-      left: 78px;
-      top: 40px;
-      transform: rotate(45deg);
-    }
-
-    .branch-right-two {
-      left: 72px;
-      top: 20px;
-      transform: rotate(25deg);
+      right: 20px;
+      top: 10px;
     }
 
     .timer {
       position: absolute;
-      bottom: 50px;
       left: 35px;
+      bottom: 45px;
       font-size: 18px;
       color: #333;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px) rotate(45deg);
-      }
-
-      50% {
-        transform: translateY(-6px) rotate(45deg);
-      }
+      z-index: 2;
     }
   </style>
 </head>
@@ -149,15 +63,7 @@
       </p>
     </div>
 
-    <div class="heart" id="heart"></div>
-
-    <div class="tree">
-      <div class="branch branch-left-one"></div>
-      <div class="branch branch-left-two"></div>
-      <div class="branch branch-right-one"></div>
-      <div class="branch branch-right-two"></div>
-      <div class="trunk"></div>
-    </div>
+    <canvas id="treeCanvas" width="500" height="450"></canvas>
 
     <div class="timer">
       My love for you began...
@@ -168,82 +74,157 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("treeCanvas");
+    const ctx = canvas.getContext("2d");
 
-      const heart = document.getElementById("heart");
+    const colours = [
+      "#ff2d75",
+      "#ff0066",
+      "#ffcc00",
+      "#ff6b6b",
+      "#ff1493",
+      "#ff8a80"
+    ];
 
-      const colours = [
-        "#ff2d75",
-        "#ff0066",
-        "#ffcc00",
-        "#ff6b6b",
-        "#ff1493",
-        "#ff8a80",
-        "#ffd54f"
-      ];
+    const hearts = [];
 
-      for (let i = 0; i < 520; i++) {
+    function heartPoint(t, scale) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
 
-        const leaf = document.createElement("div");
-        leaf.className = "leaf";
+      const y = -(
+        13 * Math.cos(t)
+        - 5 * Math.cos(2 * t)
+        - 2 * Math.cos(3 * t)
+        - Math.cos(4 * t)
+      );
 
+      return {
+        x: 250 + x * scale,
+        y: 145 + y * scale
+      };
+    }
+
+    function drawHeart(x, y, size, colour, opacity) {
+      ctx.save();
+
+      ctx.translate(x, y);
+      ctx.rotate(Math.PI / 4);
+
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = colour;
+
+      ctx.fillRect(-size / 2, -size / 2, size, size);
+
+      ctx.beginPath();
+      ctx.arc(-size / 2, 0, size / 2, 0, Math.PI * 2);
+      ctx.arc(0, -size / 2, size / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.globalAlpha = 1;
+    }
+
+    function createHearts() {
+      for (let i = 0; i < 900; i++) {
         const t = Math.random() * Math.PI * 2;
+        const r = Math.pow(Math.random(), 0.55);
 
-        const r = Math.pow(Math.random(), 0.62);
+        const p = heartPoint(t, 10 * r);
 
-        const x =
-          16 * Math.pow(Math.sin(t), 3);
+        hearts.push({
+          x: p.x,
+          y: p.y,
+          size: 4 + Math.random() * 7,
+          colour: colours[Math.floor(Math.random() * colours.length)],
+          speed: 0.4 + Math.random() * 0.8,
+          offset: Math.random() * 100,
+          opacity: 0.65 + Math.random() * 0.35
+        });
+      }
+    }
 
-        const y = -(
-          13 * Math.cos(t)
-          - 5 * Math.cos(2 * t)
-          - 2 * Math.cos(3 * t)
-          - Math.cos(4 * t)
+    function drawTree() {
+      ctx.save();
+
+      ctx.strokeStyle = "#008b80";
+      ctx.lineCap = "round";
+
+      ctx.lineWidth = 14;
+
+      ctx.beginPath();
+      ctx.moveTo(250, 390);
+      ctx.bezierCurveTo(245, 330, 250, 275, 250, 230);
+      ctx.stroke();
+
+      ctx.lineWidth = 8;
+
+      ctx.beginPath();
+      ctx.moveTo(250, 270);
+      ctx.bezierCurveTo(210, 235, 190, 200, 160, 165);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(250, 270);
+      ctx.bezierCurveTo(290, 235, 315, 200, 345, 165);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(250, 235);
+      ctx.bezierCurveTo(225, 210, 215, 180, 205, 145);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(250, 235);
+      ctx.bezierCurveTo(275, 210, 285, 180, 300, 145);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawTree();
+
+      const time = Date.now() * 0.002;
+
+      for (const h of hearts) {
+        const sway = Math.sin(time + h.offset) * h.speed;
+        const float = Math.cos(time * 0.8 + h.offset) * h.speed;
+
+        drawHeart(
+          h.x + sway,
+          h.y + float,
+          h.size,
+          h.colour,
+          h.opacity
         );
-
-        leaf.style.left =
-          205 + x * 11 * r + "px";
-
-        leaf.style.top =
-          165 + y * 9 * r + "px";
-
-        leaf.style.background =
-          colours[Math.floor(Math.random() * colours.length)];
-
-        const size =
-          6 + Math.random() * 10;
-
-        leaf.style.setProperty("--size", size + "px");
-
-        leaf.style.animationDelay =
-          Math.random() * 3 + "s";
-
-        leaf.style.opacity =
-          0.75 + Math.random() * 0.25;
-
-        heart.appendChild(leaf);
       }
 
-      const startDate =
-        new Date("2025-05-15T00:00:00");
+      requestAnimationFrame(animate);
+    }
 
-      function updateTimer() {
-        const now = new Date();
-        const diff = now - startDate;
+    createHearts();
+    animate();
 
-        const seconds = Math.floor(diff / 1000) % 60;
-        const minutes = Math.floor(diff / (1000 * 60)) % 60;
-        const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const startDate = new Date("2025-05-15T00:00:00");
 
-        document.getElementById("counter").textContent =
-          `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
-      }
+    function updateTimer() {
+      const now = new Date();
+      const diff = now - startDate;
 
-      setInterval(updateTimer, 1000);
-      updateTimer();
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    });
+      document.getElementById("counter").textContent =
+        `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
   </script>
 
 </body>
