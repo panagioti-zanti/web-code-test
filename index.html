@@ -1,91 +1,59 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Heart Tree</title>
 
   <style>
-
     body {
       margin: 0;
       height: 100vh;
-
       background: #111;
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       font-family: Arial, sans-serif;
     }
 
     .card {
       width: 850px;
       height: 520px;
-
       background: #fff7ef;
-
       border-radius: 25px;
-
       padding: 35px;
-
       position: relative;
-
       overflow: hidden;
     }
 
     .text {
-      width: 45%;
-
-      font-size: 22px;
-
+      width: 40%;
+      font-size: 18px;
       color: #222;
     }
 
-    /*
-      HEART CONTAINER
-    */
     .heart {
       position: absolute;
-
-      right: 90px;
-      top: 55px;
-
-      width: 330px;
-      height: 300px;
+      right: 75px;
+      top: 35px;
+      width: 420px;
+      height: 360px;
     }
 
-    /*
-      HEART PARTICLES
-    */
     .leaf {
       position: absolute;
-
-      width: 14px;
-      height: 14px;
-
+      width: var(--size);
+      height: var(--size);
       background: red;
-
       transform: rotate(45deg);
-
       animation: float 3s infinite ease-in-out;
     }
 
-    /*
-      TOP CIRCLES OF HEART SHAPE
-    */
     .leaf::before,
     .leaf::after {
-
       content: "";
-
       position: absolute;
-
       width: 100%;
       height: 100%;
-
       background: inherit;
-
       border-radius: 50%;
     }
 
@@ -97,106 +65,74 @@
       top: -50%;
     }
 
-    /*
-      TREE STRUCTURE
-    */
     .tree {
       position: absolute;
-
-      right: 220px;
-      top: 285px;
-
-      width: 120px;
-      height: 190px;
+      right: 230px;
+      top: 235px;
+      width: 130px;
+      height: 230px;
     }
 
-    /*
-      MAIN TRUNK
-    */
     .trunk {
       position: absolute;
-
-      left: 42px;
-      top: 45px;
-
+      left: 48px;
+      top: 80px;
       width: 38px;
-      height: 130px;
-
-      background: linear-gradient(
-        to right,
-        #5b3218,
-        #8b5a2b,
-        #4a2612
-      );
-
-      border-radius: 45% 45% 20% 20%;
-
-      transform: rotate(2deg);
+      height: 145px;
+      background: linear-gradient(to right, #007f78, #009688, #006b64);
+      clip-path: polygon(35% 0%, 65% 0%, 85% 100%, 15% 100%);
     }
 
-    /*
-      BRANCHES
-    */
     .branch {
       position: absolute;
-
-      width: 20px;
-      height: 90px;
-
-      background: linear-gradient(
-        to right,
-        #5b3218,
-        #8b5a2b,
-        #4a2612
-      );
-
+      width: 12px;
+      height: 100px;
+      background: #008b80;
       border-radius: 50%;
-
       transform-origin: bottom center;
     }
 
-    .branch-left {
-      left: 28px;
-      top: 20px;
-
-      transform: rotate(-35deg);
+    .branch-left-one {
+      left: 38px;
+      top: 40px;
+      transform: rotate(-45deg);
     }
 
-    .branch-right {
-      left: 70px;
+    .branch-left-two {
+      left: 45px;
       top: 20px;
-
-      transform: rotate(35deg);
+      transform: rotate(-25deg);
     }
 
-    /*
-      TIMER
-    */
+    .branch-right-one {
+      left: 78px;
+      top: 40px;
+      transform: rotate(45deg);
+    }
+
+    .branch-right-two {
+      left: 72px;
+      top: 20px;
+      transform: rotate(25deg);
+    }
+
     .timer {
       position: absolute;
-
-      bottom: 55px;
+      bottom: 50px;
       left: 35px;
-
-      font-size: 24px;
-
+      font-size: 18px;
       color: #333;
     }
 
-    /*
-      FLOATING ANIMATION
-    */
     @keyframes float {
-
       0%, 100% {
         transform: translateY(0px) rotate(45deg);
       }
 
       50% {
-        transform: translateY(-8px) rotate(45deg);
+        transform: translateY(-6px) rotate(45deg);
       }
     }
-
   </style>
 </head>
 
@@ -204,184 +140,111 @@
 
   <div class="card">
 
-    <!-- TEXT -->
     <div class="text">
-
       <p>To the love of my life:</p>
 
       <p>
         If I could choose one safe place,<br>
         it would be beside you.
       </p>
-
     </div>
 
-    <!-- HEART -->
     <div class="heart" id="heart"></div>
 
-    <!-- TREE -->
     <div class="tree">
-
-      <div class="branch branch-left"></div>
-
-      <div class="branch branch-right"></div>
-
+      <div class="branch branch-left-one"></div>
+      <div class="branch branch-left-two"></div>
+      <div class="branch branch-right-one"></div>
+      <div class="branch branch-right-two"></div>
       <div class="trunk"></div>
-
     </div>
 
-    <!-- TIMER -->
     <div class="timer">
-
       My love for you began...
-
       <br><br>
-
       <span id="counter"></span>
-
     </div>
 
   </div>
 
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-    /*
-      GET HEART CONTAINER
-    */
-    const heart =
-      document.getElementById("heart");
+      const heart = document.getElementById("heart");
 
-    /*
-      CREATE HEART PARTICLES
-    */
-    for (let i = 0; i < 320; i++) {
-
-      const leaf =
-        document.createElement("div");
-
-      leaf.className = "leaf";
-
-      /*
-        RANDOM ANGLE
-      */
-      const t =
-        Math.random() * Math.PI * 2;
-
-      /*
-        DISTRIBUTION CONTROL
-      */
-      const r =
-        Math.pow(Math.random(), 0.45);
-
-      /*
-        HEART EQUATION
-      */
-      const x =
-        16 * Math.pow(Math.sin(t), 3);
-
-      const y = -(
-        13 * Math.cos(t)
-        - 5 * Math.cos(2 * t)
-        - 2 * Math.cos(3 * t)
-        - Math.cos(4 * t)
-      );
-
-      /*
-        POSITIONING
-      */
-      leaf.style.left =
-        155 + x * 7 * r + "px";
-
-      leaf.style.top =
-        135 + y * 7 * r + "px";
-
-      /*
-        RANDOM COLOURS
-      */
       const colours = [
         "#ff2d75",
         "#ff0066",
         "#ffcc00",
         "#ff6b6b",
-        "#ff1493"
+        "#ff1493",
+        "#ff8a80",
+        "#ffd54f"
       ];
 
-      leaf.style.background =
-        colours[
-          Math.floor(
-            Math.random() * colours.length
-          )
-        ];
+      for (let i = 0; i < 520; i++) {
 
-      /*
-        RANDOM MOVEMENT TIMING
-      */
-      leaf.style.animationDelay =
-        Math.random() * 3 + "s";
+        const leaf = document.createElement("div");
+        leaf.className = "leaf";
 
-      /*
-        RANDOM SIZE
-      */
-      const size =
-        10 + Math.random() * 10;
+        const t = Math.random() * Math.PI * 2;
 
-      leaf.style.width =
-        size + "px";
+        const r = Math.pow(Math.random(), 0.62);
 
-      leaf.style.height =
-        size + "px";
+        const x =
+          16 * Math.pow(Math.sin(t), 3);
 
-      /*
-        ADD TO PAGE
-      */
-      heart.appendChild(leaf);
-    }
+        const y = -(
+          13 * Math.cos(t)
+          - 5 * Math.cos(2 * t)
+          - 2 * Math.cos(3 * t)
+          - Math.cos(4 * t)
+        );
 
-    /*
-      TIMER START DATE
-    */
-    const startDate =
-      new Date("2025-05-15T00:00:00");
+        leaf.style.left =
+          205 + x * 11 * r + "px";
 
-    /*
-      UPDATE TIMER
-    */
-    function updateTimer() {
+        leaf.style.top =
+          165 + y * 9 * r + "px";
 
-      const now = new Date();
+        leaf.style.background =
+          colours[Math.floor(Math.random() * colours.length)];
 
-      const diff =
-        now - startDate;
+        const size =
+          6 + Math.random() * 10;
 
-      const seconds =
-        Math.floor(diff / 1000) % 60;
+        leaf.style.setProperty("--size", size + "px");
 
-      const minutes =
-        Math.floor(diff / (1000 * 60)) % 60;
+        leaf.style.animationDelay =
+          Math.random() * 3 + "s";
 
-      const hours =
-        Math.floor(diff / (1000 * 60 * 60)) % 24;
+        leaf.style.opacity =
+          0.75 + Math.random() * 0.25;
 
-      const days =
-        Math.floor(diff / (1000 * 60 * 60 * 24));
+        heart.appendChild(leaf);
+      }
 
-      document.getElementById("counter").textContent =
+      const startDate =
+        new Date("2025-05-15T00:00:00");
 
-        `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
-    }
+      function updateTimer() {
+        const now = new Date();
+        const diff = now - startDate;
 
-    /*
-      UPDATE EVERY SECOND
-    */
-    setInterval(updateTimer, 1000);
+        const seconds = Math.floor(diff / 1000) % 60;
+        const minutes = Math.floor(diff / (1000 * 60)) % 60;
+        const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    /*
-      RUN IMMEDIATELY
-    */
-    updateTimer();
+        document.getElementById("counter").textContent =
+          `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
+      }
 
+      setInterval(updateTimer, 1000);
+      updateTimer();
+
+    });
   </script>
 
 </body>
-
 </html>
