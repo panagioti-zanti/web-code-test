@@ -265,151 +265,190 @@ function drawTree(progress) {
   ctx.rect(0, 0, canvas.width, groundY - 1);
   ctx.clip();
 
+  ctx.fillStyle = green;
+  ctx.strokeStyle = green;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
-  const treeBaseY = groundY - 12;
+  const treeBaseY = groundY - 8;
 
-  const trunk = [
-    { x: treeX - 4, y: treeBaseY },
-    { x: treeX - 16, y: groundY - 85 },
-    { x: treeX + 14, y: groundY - 165 },
-    { x: treeX + 8, y: groundY - 285 }
-  ];
+  const growY = y => groundY - (groundY - y) * p;
 
-  drawTaperedBranch(trunk, p, 34, 3.2, green);
+  // MAIN ORGANIC TREE BODY
+  ctx.beginPath();
 
-  if (progress > 0.12) {
-    const bp = clamp((progress - 0.12) / 0.88, 0, 1);
+  // left side of base
+  ctx.moveTo(treeX - 18, treeBaseY);
 
-    const branches = [
-      {
-        points: [
-          { x: treeX - 7, y: groundY - 82 },
-          { x: treeX - 45, y: groundY - 110 },
-          { x: treeX - 100, y: groundY - 145 },
-          { x: treeX - 175, y: groundY - 178 }
-        ],
-        sw: 13,
-        ew: 2.2
-      },
-      {
-        points: [
-          { x: treeX - 1, y: groundY - 95 },
-          { x: treeX + 42, y: groundY - 125 },
-          { x: treeX + 95, y: groundY - 155 },
-          { x: treeX + 170, y: groundY - 190 }
-        ],
-        sw: 12,
-        ew: 2.2
-      },
-      {
-        points: [
-          { x: treeX + 2, y: groundY - 145 },
-          { x: treeX - 20, y: groundY - 180 },
-          { x: treeX - 58, y: groundY - 220 },
-          { x: treeX - 105, y: groundY - 265 }
-        ],
-        sw: 8,
-        ew: 1.5
-      },
-      {
-        points: [
-          { x: treeX + 6, y: groundY - 160 },
-          { x: treeX + 35, y: groundY - 192 },
-          { x: treeX + 78, y: groundY - 230 },
-          { x: treeX + 125, y: groundY - 275 }
-        ],
-        sw: 8,
-        ew: 1.5
-      },
-      {
-        points: [
-          { x: treeX + 8, y: groundY - 225 },
-          { x: treeX - 2, y: groundY - 245 },
-          { x: treeX - 18, y: groundY - 270 },
-          { x: treeX - 36, y: groundY - 315 }
-        ],
-        sw: 4.4,
-        ew: 0.7
-      },
-      {
-        points: [
-          { x: treeX + 8, y: groundY - 225 },
-          { x: treeX + 22, y: groundY - 250 },
-          { x: treeX + 34, y: groundY - 275 },
-          { x: treeX + 44, y: groundY - 325 }
-        ],
-        sw: 4,
-        ew: 0.65
-      }
-    ];
+  // left side trunk up to first fork
+  ctx.bezierCurveTo(
+    treeX - 24, growY(330),
+    treeX - 18, growY(265),
+    treeX - 8, growY(225)
+  );
 
-    for (const b of branches) {
-      drawTaperedBranch(b.points, bp, b.sw, b.ew, green);
-    }
+  // left lower branch underside
+  ctx.bezierCurveTo(
+    treeX - 55, growY(205),
+    treeX - 115, growY(175),
+    treeX - 178, growY(148)
+  );
+
+  // left lower branch tip
+  ctx.bezierCurveTo(
+    treeX - 145, growY(155),
+    treeX - 85, growY(190),
+    treeX - 4, growY(238)
+  );
+
+  // left upper branch underside
+  ctx.bezierCurveTo(
+    treeX - 38, growY(190),
+    treeX - 70, growY(145),
+    treeX - 105, growY(92)
+  );
+
+  // left upper branch tip
+  ctx.bezierCurveTo(
+    treeX - 72, growY(132),
+    treeX - 40, growY(174),
+    treeX + 3, growY(210)
+  );
+
+  // centre trunk left edge
+  ctx.bezierCurveTo(
+    treeX + 0, growY(175),
+    treeX + 4, growY(130),
+    treeX + 5, growY(70)
+  );
+
+  // top tip
+  ctx.bezierCurveTo(
+    treeX + 9, growY(115),
+    treeX + 11, growY(160),
+    treeX + 9, growY(210)
+  );
+
+  // right upper branch top
+  ctx.bezierCurveTo(
+    treeX + 45, growY(165),
+    treeX + 82, growY(120),
+    treeX + 122, growY(82)
+  );
+
+  // right upper branch underside
+  ctx.bezierCurveTo(
+    treeX + 85, growY(135),
+    treeX + 50, growY(178),
+    treeX + 11, growY(230)
+  );
+
+  // right lower branch top
+  ctx.bezierCurveTo(
+    treeX + 75, growY(200),
+    treeX + 125, growY(170),
+    treeX + 188, growY(145)
+  );
+
+  // right lower branch underside
+  ctx.bezierCurveTo(
+    treeX + 125, growY(178),
+    treeX + 65, growY(208),
+    treeX + 8, growY(250)
+  );
+
+  // right side trunk down
+  ctx.bezierCurveTo(
+    treeX + 18, growY(285),
+    treeX + 25, growY(340),
+    treeX + 18, treeBaseY
+  );
+
+  ctx.closePath();
+  ctx.fill();
+
+  if (progress > 0.25) {
+    const tp = clamp((progress - 0.25) / 0.75, 0, 1);
 
     const twigs = [
       {
         points: [
-          { x: treeX - 95, y: groundY - 145 },
-          { x: treeX - 120, y: groundY - 156 },
-          { x: treeX - 145, y: groundY - 170 },
-          { x: treeX - 185, y: groundY - 190 }
+          { x: treeX - 125, y: groundY - 155 },
+          { x: treeX - 150, y: groundY - 168 },
+          { x: treeX - 170, y: groundY - 185 },
+          { x: treeX - 192, y: groundY - 210 }
         ],
         sw: 1.8
       },
       {
         points: [
-          { x: treeX - 125, y: groundY - 158 },
-          { x: treeX - 142, y: groundY - 180 },
-          { x: treeX - 155, y: groundY - 200 },
-          { x: treeX - 168, y: groundY - 230 }
+          { x: treeX - 102, y: groundY - 168 },
+          { x: treeX - 122, y: groundY - 188 },
+          { x: treeX - 142, y: groundY - 210 },
+          { x: treeX - 158, y: groundY - 238 }
+        ],
+        sw: 1.7
+      },
+      {
+        points: [
+          { x: treeX - 58, y: groundY - 205 },
+          { x: treeX - 76, y: groundY - 230 },
+          { x: treeX - 90, y: groundY - 255 },
+          { x: treeX - 105, y: groundY - 285 }
         ],
         sw: 1.5
       },
       {
         points: [
-          { x: treeX - 58, y: groundY - 220 },
-          { x: treeX - 73, y: groundY - 238 },
-          { x: treeX - 88, y: groundY - 260 },
-          { x: treeX - 110, y: groundY - 292 }
-        ],
-        sw: 1.5
-      },
-      {
-        points: [
+          { x: treeX + 58, y: groundY - 205 },
           { x: treeX + 78, y: groundY - 230 },
-          { x: treeX + 102, y: groundY - 240 },
-          { x: treeX + 130, y: groundY - 256 },
-          { x: treeX + 165, y: groundY - 285 }
+          { x: treeX + 100, y: groundY - 252 },
+          { x: treeX + 130, y: groundY - 278 }
         ],
-        sw: 1.5
+        sw: 1.6
       },
       {
         points: [
-          { x: treeX + 118, y: groundY - 170 },
-          { x: treeX + 140, y: groundY - 178 },
-          { x: treeX + 162, y: groundY - 187 },
-          { x: treeX + 190, y: groundY - 200 }
+          { x: treeX + 122, y: groundY - 162 },
+          { x: treeX + 150, y: groundY - 170 },
+          { x: treeX + 175, y: groundY - 185 },
+          { x: treeX + 205, y: groundY - 205 }
+        ],
+        sw: 1.7
+      },
+      {
+        points: [
+          { x: treeX + 135, y: groundY - 160 },
+          { x: treeX + 160, y: groundY - 145 },
+          { x: treeX + 180, y: groundY - 130 },
+          { x: treeX + 205, y: groundY - 105 }
         ],
         sw: 1.4
       },
       {
         points: [
-          { x: treeX + 130, y: groundY - 178 },
-          { x: treeX + 150, y: groundY - 165 },
-          { x: treeX + 170, y: groundY - 154 },
-          { x: treeX + 195, y: groundY - 145 }
+          { x: treeX + 8, y: groundY - 245 },
+          { x: treeX - 8, y: groundY - 270 },
+          { x: treeX - 20, y: groundY - 292 },
+          { x: treeX - 30, y: groundY - 325 }
         ],
-        sw: 1.3
+        sw: 1.4
+      },
+      {
+        points: [
+          { x: treeX + 10, y: groundY - 250 },
+          { x: treeX + 25, y: groundY - 275 },
+          { x: treeX + 35, y: groundY - 300 },
+          { x: treeX + 45, y: groundY - 335 }
+        ],
+        sw: 1.4
       }
     ];
 
-    ctx.globalAlpha = 0.55;
+    ctx.globalAlpha = 0.45;
 
     for (const t of twigs) {
-      drawTaperedBranch(t.points, bp, t.sw, 0.3, green);
+      drawTaperedBranch(t.points, tp, t.sw, 0.25, green);
     }
 
     ctx.globalAlpha = 1;
