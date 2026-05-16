@@ -233,7 +233,7 @@
     }
 
     function drawTaperedBranch(points, progress, startWidth, endWidth) {
-      const segments = 28;
+      const segments = 60;
       const visible = Math.floor(segments * progress);
 
       for (let i = 0; i < visible; i++) {
@@ -291,90 +291,79 @@
         const branches = [
           {
             points: [
-              { x: treeX, y: groundY - 65 },
-              { x: treeX - 45, y: groundY - 85 },
-              { x: treeX - 95, y: groundY - 115 },
-              { x: treeX - 155, y: groundY - 135 }
+              { x: treeX, y: groundY - 72 },
+              { x: treeX - 35, y: groundY - 93 },
+              { x: treeX - 70, y: groundY - 113 },
+              { x: treeX - 115, y: groundY - 128 }
             ],
             sw: 7,
-            ew: 1.2,
-            alpha: 0.75
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 115 },
-              { x: treeX - 25, y: groundY - 150 },
-              { x: treeX - 55, y: groundY - 195 },
-              { x: treeX - 80, y: groundY - 235 }
-            ],
-            sw: 6,
-            ew: 1.2,
-            alpha: 0.9
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 150 },
-              { x: treeX + 5, y: groundY - 185 },
-              { x: treeX + 0, y: groundY - 225 },
-              { x: treeX + 5, y: groundY - 270 }
-            ],
-            sw: 5,
-            ew: 1.1,
-            alpha: 0.75
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 105 },
-              { x: treeX + 30, y: groundY - 135 },
-              { x: treeX + 65, y: groundY - 165 },
-              { x: treeX + 95, y: groundY - 210 }
-            ],
-            sw: 6,
             ew: 1.2,
             alpha: 0.85
           },
           {
             points: [
-              { x: treeX, y: groundY - 75 },
-              { x: treeX + 35, y: groundY - 95 },
-              { x: treeX + 75, y: groundY - 115 },
-              { x: treeX + 125, y: groundY - 135 }
+              { x: treeX, y: groundY - 118 },
+              { x: treeX - 28, y: groundY - 145 },
+              { x: treeX - 45, y: groundY - 180 },
+              { x: treeX - 58, y: groundY - 218 }
             ],
-            sw: 4,
+            sw: 6,
+            ew: 1.1,
+            alpha: 0.85
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 148 },
+              { x: treeX + 12, y: groundY - 180 },
+              { x: treeX + 18, y: groundY - 218 },
+              { x: treeX + 10, y: groundY - 258 }
+            ],
+            sw: 5,
+            ew: 1.0,
+            alpha: 0.75
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 105 },
+              { x: treeX + 28, y: groundY - 132 },
+              { x: treeX + 48, y: groundY - 165 },
+              { x: treeX + 70, y: groundY - 205 }
+            ],
+            sw: 6,
+            ew: 1.1,
+            alpha: 0.85
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 68 },
+              { x: treeX + 35, y: groundY - 85 },
+              { x: treeX + 72, y: groundY - 103 },
+              { x: treeX + 112, y: groundY - 125 }
+            ],
+            sw: 5,
             ew: 0.9,
-            alpha: 0.55
+            alpha: 0.65
           },
           {
             points: [
-              { x: treeX - 55, y: groundY - 105 },
-              { x: treeX - 80, y: groundY - 115 },
-              { x: treeX - 105, y: groundY - 125 },
-              { x: treeX - 135, y: groundY - 128 }
+              { x: treeX - 55, y: groundY - 108 },
+              { x: treeX - 72, y: groundY - 117 },
+              { x: treeX - 90, y: groundY - 123 },
+              { x: treeX - 108, y: groundY - 126 }
             ],
-            sw: 2.2,
-            ew: 0.6,
+            sw: 1.8,
+            ew: 0.4,
             alpha: 0.35
           },
           {
             points: [
-              { x: treeX - 45, y: groundY - 175 },
-              { x: treeX - 70, y: groundY - 195 },
-              { x: treeX - 90, y: groundY - 215 },
-              { x: treeX - 110, y: groundY - 240 }
+              { x: treeX + 45, y: groundY - 152 },
+              { x: treeX + 60, y: groundY - 160 },
+              { x: treeX + 75, y: groundY - 168 },
+              { x: treeX + 92, y: groundY - 178 }
             ],
-            sw: 2,
-            ew: 0.5,
-            alpha: 0.35
-          },
-          {
-            points: [
-              { x: treeX + 45, y: groundY - 150 },
-              { x: treeX + 70, y: groundY - 165 },
-              { x: treeX + 95, y: groundY - 175 },
-              { x: treeX + 120, y: groundY - 185 }
-            ],
-            sw: 2,
-            ew: 0.5,
+            sw: 1.8,
+            ew: 0.4,
             alpha: 0.35
           }
         ];
