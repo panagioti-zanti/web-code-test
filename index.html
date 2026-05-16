@@ -163,7 +163,6 @@
       );
 
       ctx.fill();
-
       ctx.restore();
       ctx.globalAlpha = 1;
     }
@@ -217,6 +216,22 @@
       ctx.fill();
     }
 
+    function cubicBezier(p, t) {
+      const x =
+        Math.pow(1 - t, 3) * p[0].x +
+        3 * Math.pow(1 - t, 2) * t * p[1].x +
+        3 * (1 - t) * Math.pow(t, 2) * p[2].x +
+        Math.pow(t, 3) * p[3].x;
+
+      const y =
+        Math.pow(1 - t, 3) * p[0].y +
+        3 * Math.pow(1 - t, 2) * t * p[1].y +
+        3 * (1 - t) * Math.pow(t, 2) * p[2].y +
+        Math.pow(t, 3) * p[3].y;
+
+      return { x, y };
+    }
+
     function drawTaperedBranch(points, progress, startWidth, endWidth) {
       const segments = 28;
       const visible = Math.floor(segments * progress);
@@ -240,22 +255,6 @@
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
-    }
-
-    function cubicBezier(p, t) {
-      const x =
-        Math.pow(1 - t, 3) * p[0].x +
-        3 * Math.pow(1 - t, 2) * t * p[1].x +
-        3 * (1 - t) * Math.pow(t, 2) * p[2].x +
-        Math.pow(t, 3) * p[3].x;
-
-      const y =
-        Math.pow(1 - t, 3) * p[0].y +
-        3 * Math.pow(1 - t, 2) * t * p[1].y +
-        3 * (1 - t) * Math.pow(t, 2) * p[2].y +
-        Math.pow(t, 3) * p[3].y;
-
-      return { x, y };
     }
 
     function drawTree(progress) {
@@ -385,8 +384,11 @@
       leaves.length = 0;
       fallingLeaves.length = 0;
 
-      const canopyCentreX = treeX - 105;
-      const canopyCentreY = groundY - 215;
+      const canopyOffsetX = -105;
+      const canopyOffsetY = -215;
+
+      const canopyCentreX = treeX + canopyOffsetX;
+      const canopyCentreY = groundY + canopyOffsetY;
 
       for (let i = 0; i < 1050; i++) {
         const t = Math.random() * Math.PI * 2;
@@ -406,11 +408,17 @@
         );
 
         leaves.push({
-          x: p.x + (Math.random() - 0.5) * 18,
-          y: p.y + (Math.random() - 0.5) * 18,
+          relX:
+            p.x - treeX + (Math.random() - 0.5) * 18,
 
-          startX: treeX,
-          startY: groundY - 125,
+          finalY:
+            p.y + (Math.random() - 0.5) * 18,
+
+          startRelX:
+            canopyOffsetX,
+
+          startY:
+            canopyCentreY,
 
           size: 2.5 + Math.random() * 6,
           colour: randomColour(),
@@ -425,8 +433,8 @@
 
       for (let i = 0; i < 60; i++) {
         fallingLeaves.push({
-          x: canopyCentreX - 30 + Math.random() * 210,
-          y: canopyCentreY - 80 + Math.random() * 160,
+          relX: -160 + Math.random() * 230,
+          y: groundY - 300 + Math.random() * 150,
           size: 3 + Math.random() * 5,
           colour: randomColour(),
           speedX: -0.45 - Math.random() * 0.55,
@@ -449,10 +457,13 @@
         const e = easeOutCubic(local);
 
         const x =
-          leaf.startX + (leaf.x - leaf.startX) * e;
+          treeX +
+          leaf.startRelX +
+          (leaf.relX - leaf.startRelX) * e;
 
         const y =
-          leaf.startY + (leaf.y - leaf.startY) * e;
+          leaf.startY +
+          (leaf.finalY - leaf.startY) * e;
 
         const sway =
           Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
@@ -472,19 +483,20 @@
       if (!active) return;
 
       for (const leaf of fallingLeaves) {
-        leaf.x += leaf.speedX;
+        leaf.relX += leaf.speedX;
         leaf.y += leaf.speedY;
 
-        if (leaf.y > groundY + 30 || leaf.x < 270) {
-          leaf.x =
-            treeX - 160 + Math.random() * 230;
+        if (leaf.y > groundY + 30 || treeX + leaf.relX < 270) {
+          leaf.relX =
+            -160 + Math.random() * 230;
 
           leaf.y =
             groundY - 300 + Math.random() * 150;
         }
 
         drawHeart(
-          leaf.x +
+          treeX +
+          leaf.relX +
           Math.sin(frame * 0.03 + leaf.phase) * 7,
 
           leaf.y,
@@ -526,7 +538,7 @@
           clamp((frame - 95) / 150, 0, 1);
 
         const moveProgress =
-          clamp((frame - 245) / 130, 0, 1);
+          clamp((frame - 430) / 130, 0, 1);
 
         treeX =
           impactX +
@@ -544,10 +556,10 @@
             clamp((frame - 245) / 180, 0, 1);
 
           drawLeaves(leafProgress);
-          drawFallingLeaves(frame > 440);
+          drawFallingLeaves(frame > 570);
         }
 
-        if (moveProgress > 0.55) {
+        if (moveProgress > 0.35) {
           textBox.classList.add("show");
           timerBox.classList.add("show");
         }
