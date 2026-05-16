@@ -202,7 +202,6 @@
       if (!ballVisible) return;
 
       const p = easeOutCubic(progress);
-
       ballY = startHeart.y + (groundY - startHeart.y - 11) * p;
 
       if (progress >= 1) {
@@ -261,11 +260,18 @@
       const green = "#00a58f";
 
       ctx.save();
+
+      ctx.beginPath();
+      ctx.rect(0, 0, canvas.width, groundY - 1);
+      ctx.clip();
+
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
+      const treeBaseY = groundY - 13;
+
       const trunk = [
-        { x: treeX, y: groundY },
+        { x: treeX, y: treeBaseY },
         { x: treeX - 6, y: groundY - 60 },
         { x: treeX + 7, y: groundY - 125 },
         { x: treeX + 3, y: groundY - 190 }
@@ -353,12 +359,6 @@
             { x: treeX - 86, y: groundY - 237 }
           ],
           [
-            { x: treeX - 52, y: groundY - 208 },
-            { x: treeX - 64, y: groundY - 222 },
-            { x: treeX - 76, y: groundY - 236 },
-            { x: treeX - 94, y: groundY - 250 }
-          ],
-          [
             { x: treeX + 46, y: groundY - 154 },
             { x: treeX + 62, y: groundY - 172 },
             { x: treeX + 82, y: groundY - 188 },
@@ -375,12 +375,6 @@
             { x: treeX + 28, y: groundY - 218 },
             { x: treeX + 42, y: groundY - 238 },
             { x: treeX + 55, y: groundY - 258 }
-          ],
-          [
-            { x: treeX + 3, y: groundY - 235 },
-            { x: treeX - 12, y: groundY - 246 },
-            { x: treeX - 24, y: groundY - 258 },
-            { x: treeX - 38, y: groundY - 270 }
           ]
         ];
 
@@ -428,9 +422,7 @@
             - normalX * normalX * Math.pow(normalY, 3);
 
           if (heartValue <= 0) {
-            if (Math.random() < 0.08) {
-              continue;
-            }
+            if (Math.random() < 0.08) continue;
 
             leaves.push({
               relX: canopyOffsetX + px,
@@ -467,7 +459,6 @@
 
     function drawLeaves(progress) {
       for (const leaf of leaves) {
-
         const local = clamp(
           (progress * 190 - leaf.delay) / 45,
           0,
