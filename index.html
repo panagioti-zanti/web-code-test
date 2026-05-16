@@ -377,7 +377,7 @@
         Jittered grid gives more even coverage
         than fully random points.
       */
-      const leafSpacing = 13;
+      const leafSpacing = 9;
 
       for (let y = -150; y <= 120; y += leafSpacing) {
         for (let x = -190; x <= 190; x += leafSpacing) {
@@ -398,7 +398,7 @@
             px / 150;
 
           const normalY =
-            py / 125;
+            -py / 125;
 
           const heartValue =
             Math.pow(
