@@ -261,26 +261,24 @@
       const p = easeOutCubic(progress);
 
       ctx.save();
-
       ctx.fillStyle = "#00a58f";
 
-      const trunkTopY = groundY - 150 * p;
+      const trunkTopY = groundY - 175 * p;
 
       ctx.beginPath();
-
       ctx.moveTo(treeX - 11, groundY);
 
       ctx.bezierCurveTo(
-        treeX - 8, groundY - 45 * p,
-        treeX - 4, groundY - 105 * p,
+        treeX - 8, groundY - 55 * p,
+        treeX - 5, groundY - 120 * p,
         treeX - 2, trunkTopY
       );
 
       ctx.lineTo(treeX + 2, trunkTopY);
 
       ctx.bezierCurveTo(
-        treeX + 4, groundY - 105 * p,
-        treeX + 8, groundY - 45 * p,
+        treeX + 5, groundY - 120 * p,
+        treeX + 8, groundY - 55 * p,
         treeX + 11, groundY
       );
 
@@ -293,70 +291,97 @@
         const branches = [
           {
             points: [
-              { x: treeX, y: groundY - 70 },
-              { x: treeX - 55, y: groundY - 95 },
-              { x: treeX - 110, y: groundY - 120 },
-              { x: treeX - 175, y: groundY - 145 }
+              { x: treeX, y: groundY - 65 },
+              { x: treeX - 45, y: groundY - 85 },
+              { x: treeX - 95, y: groundY - 115 },
+              { x: treeX - 155, y: groundY - 135 }
             ],
-            sw: 8,
-            ew: 1.6,
-            alpha: 1
+            sw: 7,
+            ew: 1.2,
+            alpha: 0.75
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 115 },
+              { x: treeX - 25, y: groundY - 150 },
+              { x: treeX - 55, y: groundY - 195 },
+              { x: treeX - 80, y: groundY - 235 }
+            ],
+            sw: 6,
+            ew: 1.2,
+            alpha: 0.9
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 150 },
+              { x: treeX + 5, y: groundY - 185 },
+              { x: treeX + 0, y: groundY - 225 },
+              { x: treeX + 5, y: groundY - 270 }
+            ],
+            sw: 5,
+            ew: 1.1,
+            alpha: 0.75
           },
           {
             points: [
               { x: treeX, y: groundY - 105 },
-              { x: treeX - 20, y: groundY - 150 },
-              { x: treeX - 45, y: groundY - 205 },
-              { x: treeX - 70, y: groundY - 255 }
-            ],
-            sw: 5,
-            ew: 1.2,
-            alpha: 0.65
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 120 },
-              { x: treeX + 2, y: groundY - 165 },
-              { x: treeX + 4, y: groundY - 220 },
-              { x: treeX + 1, y: groundY - 275 }
+              { x: treeX + 30, y: groundY - 135 },
+              { x: treeX + 65, y: groundY - 165 },
+              { x: treeX + 95, y: groundY - 210 }
             ],
             sw: 6,
-            ew: 1.3,
-            alpha: 0.8
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 90 },
-              { x: treeX + 35, y: groundY - 125 },
-              { x: treeX + 80, y: groundY - 165 },
-              { x: treeX + 125, y: groundY - 225 }
-            ],
-            sw: 7,
-            ew: 1.5,
-            alpha: 1
-          },
-          {
-            points: [
-              { x: treeX, y: groundY - 45 },
-              { x: treeX + 50, y: groundY - 60 },
-              { x: treeX + 110, y: groundY - 90 },
-              { x: treeX + 165, y: groundY - 120 }
-            ],
-            sw: 5,
             ew: 1.2,
-            alpha: 0.7
+            alpha: 0.85
+          },
+          {
+            points: [
+              { x: treeX, y: groundY - 75 },
+              { x: treeX + 35, y: groundY - 95 },
+              { x: treeX + 75, y: groundY - 115 },
+              { x: treeX + 125, y: groundY - 135 }
+            ],
+            sw: 4,
+            ew: 0.9,
+            alpha: 0.55
+          },
+          {
+            points: [
+              { x: treeX - 55, y: groundY - 105 },
+              { x: treeX - 80, y: groundY - 115 },
+              { x: treeX - 105, y: groundY - 125 },
+              { x: treeX - 135, y: groundY - 128 }
+            ],
+            sw: 2.2,
+            ew: 0.6,
+            alpha: 0.35
+          },
+          {
+            points: [
+              { x: treeX - 45, y: groundY - 175 },
+              { x: treeX - 70, y: groundY - 195 },
+              { x: treeX - 90, y: groundY - 215 },
+              { x: treeX - 110, y: groundY - 240 }
+            ],
+            sw: 2,
+            ew: 0.5,
+            alpha: 0.35
+          },
+          {
+            points: [
+              { x: treeX + 45, y: groundY - 150 },
+              { x: treeX + 70, y: groundY - 165 },
+              { x: treeX + 95, y: groundY - 175 },
+              { x: treeX + 120, y: groundY - 185 }
+            ],
+            sw: 2,
+            ew: 0.5,
+            alpha: 0.35
           }
         ];
 
         for (const b of branches) {
           ctx.globalAlpha = b.alpha;
-
-          drawTaperedBranch(
-            b.points,
-            bp,
-            b.sw,
-            b.ew
-          );
+          drawTaperedBranch(b.points, bp, b.sw, b.ew);
         }
 
         ctx.globalAlpha = 1;
@@ -380,23 +405,14 @@
       for (let y = -150; y <= 120; y += leafSpacing) {
         for (let x = -190; x <= 190; x += leafSpacing) {
 
-          const jitterX =
-            (Math.random() - 0.5) * 8;
+          const jitterX = (Math.random() - 0.5) * 8;
+          const jitterY = (Math.random() - 0.5) * 8;
 
-          const jitterY =
-            (Math.random() - 0.5) * 8;
+          const px = x + jitterX;
+          const py = y + jitterY;
 
-          const px =
-            x + jitterX;
-
-          const py =
-            y + jitterY;
-
-          const normalX =
-            px / 150;
-
-          const normalY =
-            -py / 125;
+          const normalX = px / 150;
+          const normalY = -py / 125;
 
           const heartValue =
             Math.pow(
@@ -406,47 +422,23 @@
             - normalX * normalX * Math.pow(normalY, 3);
 
           if (heartValue <= 0) {
-
             if (Math.random() < 0.08) {
               continue;
             }
 
             leaves.push({
-              relX:
-                canopyOffsetX + px,
-
-              finalY:
-                canopyCentreY + py,
-
-              startRelX:
-                canopyOffsetX,
-
-              startY:
-                canopyCentreY,
-
-              size:
-                4 + Math.random() * 8,
-
-              colour:
-                randomColour(),
-
-              opacity:
-                0.55 + Math.random() * 0.4,
-
-              delay:
-                Math.random() * 140,
-
-              phase:
-                Math.random() * 100,
-
-              sway:
-                Math.random() * 1.3,
-
-              rotation:
-                -0.5 + Math.random(),
-
-              depth:
-                0.7 + Math.random() * 0.6
+              relX: canopyOffsetX + px,
+              finalY: canopyCentreY + py,
+              startRelX: canopyOffsetX,
+              startY: canopyCentreY,
+              size: 4 + Math.random() * 8,
+              colour: randomColour(),
+              opacity: 0.55 + Math.random() * 0.4,
+              delay: Math.random() * 140,
+              phase: Math.random() * 100,
+              sway: Math.random() * 1.3,
+              rotation: -0.5 + Math.random(),
+              depth: 0.7 + Math.random() * 0.6
             });
           }
         }
@@ -478,11 +470,8 @@
 
         const e = easeOutCubic(local);
 
-        const x =
-          treeX + leaf.relX;
-
-        const y =
-          leaf.finalY;
+        const x = treeX + leaf.relX;
+        const y = leaf.finalY;
 
         const sway =
           Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
@@ -506,26 +495,18 @@
         leaf.y += leaf.speedY;
 
         if (leaf.y > groundY + 30 || treeX + leaf.relX < 270) {
-          leaf.relX =
-            -160 + Math.random() * 230;
-
-          leaf.y =
-            groundY - 300 + Math.random() * 150;
+          leaf.relX = -160 + Math.random() * 230;
+          leaf.y = groundY - 300 + Math.random() * 150;
         }
 
         drawHeart(
           treeX +
           leaf.relX +
           Math.sin(frame * 0.03 + leaf.phase) * 7,
-
           leaf.y,
-
           leaf.size,
-
           leaf.colour,
-
           leaf.opacity,
-
           leaf.rotation +
           Math.sin(frame * 0.02 + leaf.phase) * 0.7
         );
@@ -543,11 +524,8 @@
 
       frame++;
 
-      const groundProgress =
-        clamp(frame / 80, 0, 1);
-
-      const ballProgress =
-        clamp(frame / 95, 0, 1);
+      const groundProgress = clamp(frame / 80, 0, 1);
+      const ballProgress = clamp(frame / 95, 0, 1);
 
       drawGround(groundProgress);
       drawBall(ballProgress);
@@ -601,23 +579,13 @@
       new Date("2025-05-15T00:00:00");
 
     function updateTimer() {
-      const now =
-        new Date();
+      const now = new Date();
+      const diff = now - startDate;
 
-      const diff =
-        now - startDate;
-
-      const seconds =
-        Math.floor(diff / 1000) % 60;
-
-      const minutes =
-        Math.floor(diff / (1000 * 60)) % 60;
-
-      const hours =
-        Math.floor(diff / (1000 * 60 * 60)) % 24;
-
-      const days =
-        Math.floor(diff / (1000 * 60 * 60 * 24));
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
       document.getElementById("counter").textContent =
         `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
