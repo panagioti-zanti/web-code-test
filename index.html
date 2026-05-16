@@ -287,10 +287,10 @@ function drawTree(progress) {
           { x: treeX - 2, y: groundY - 82 },
           { x: treeX - 30, y: groundY - 105 },
           { x: treeX - 75, y: groundY - 132 },
-          { x: treeX - 128, y: groundY - 148 }
+          { x: treeX - 110, y: groundY - 152 }
         ],
         sw: 7.5,
-        ew: 1.2
+        ew: 0.25
       },
       {
         // lower right branch
@@ -301,7 +301,7 @@ function drawTree(progress) {
           { x: treeX + 118, y: groundY - 160 }
         ],
         sw: 7,
-        ew: 1.2
+        ew: 0.25
       },
       {
         // upper left branch
@@ -312,7 +312,7 @@ function drawTree(progress) {
           { x: treeX - 72, y: groundY - 208 }
         ],
         sw: 5.5,
-        ew: 1
+        ew: 0.2
       },
       {
         // upper right branch
@@ -323,7 +323,7 @@ function drawTree(progress) {
           { x: treeX + 72, y: groundY - 214 }
         ],
         sw: 5,
-        ew: 1
+        ew: 0.2
       }
     ];
 
@@ -340,7 +340,7 @@ function drawTree(progress) {
           { x: treeX - 132, y: groundY - 162 },
           { x: treeX - 150, y: groundY - 180 }
         ],
-        sw: 1
+        sw: 1.8
       },
       {
         // left lower outer twig
@@ -350,7 +350,7 @@ function drawTree(progress) {
           { x: treeX - 145, y: groundY - 145 },
           { x: treeX - 165, y: groundY - 154 }
         ],
-        sw: 0.9
+        sw: 1.3
       },
       {
         // left upper twig
@@ -360,7 +360,7 @@ function drawTree(progress) {
           { x: treeX - 74, y: groundY - 220 },
           { x: treeX - 85, y: groundY - 240 }
         ],
-        sw: 0.9
+        sw: 1.3
       },
       {
         // right upper twig
@@ -370,7 +370,7 @@ function drawTree(progress) {
           { x: treeX + 78, y: groundY - 222 },
           { x: treeX + 94, y: groundY - 238 }
         ],
-        sw: 0.9
+        sw: 1.3
       },
       {
         // right lower twig
@@ -380,7 +380,7 @@ function drawTree(progress) {
           { x: treeX + 128, y: groundY - 164 },
           { x: treeX + 150, y: groundY - 178 }
         ],
-        sw: 0.9
+        sw: 1.3
       },
       {
         // right lower outer twig
@@ -390,7 +390,7 @@ function drawTree(progress) {
           { x: treeX + 132, y: groundY - 138 },
           { x: treeX + 155, y: groundY - 128 }
         ],
-        sw: 0.8
+        sw: 1.2
       },
       {
         // small top-left split
@@ -400,7 +400,7 @@ function drawTree(progress) {
           { x: treeX - 16, y: groundY - 213 },
           { x: treeX - 26, y: groundY - 230 }
         ],
-        sw: 1
+        sw: 1.8
       },
       {
         // small top-right split
@@ -410,14 +410,14 @@ function drawTree(progress) {
           { x: treeX + 20, y: groundY - 218 },
           { x: treeX + 30, y: groundY - 236 }
         ],
-        sw: 1
+        sw: 1.8
       }
     ];
 
     ctx.globalAlpha = 0.45;
 
     for (const t of twigs) {
-      drawTaperedBranch(t.points, bp, t.sw, 0.2, green);
+      drawTaperedBranch(t.points, bp, t.sw, 0.05, green);
     }
 
     ctx.globalAlpha = 1;
