@@ -268,14 +268,6 @@ function drawTree(progress) {
 
   const treeBaseY = groundY - 10;
 
-  /*
-    Reference-style tree:
-    - compact height
-    - short curved branches
-    - central trunk continues upwards
-    - thin twigs start directly from branch ends
-  */
-
   const trunk = [
     { x: treeX - 2, y: treeBaseY },
     { x: treeX - 8, y: groundY - 65 },
@@ -438,7 +430,7 @@ function createLeaves() {
   fallingLeaves.length = 0;
 
   const canopyOffsetX = 0;
-  const canopyOffsetY = -215;
+  const canopyOffsetY = -180;
 
   const canopyCentreX = treeX + canopyOffsetX;
   const canopyCentreY = groundY + canopyOffsetY;
