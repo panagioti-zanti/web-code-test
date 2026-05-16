@@ -268,80 +268,80 @@
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
     
-      const treeBaseY = groundY - 13;
+      const treeBaseY = groundY - 12;
     
       const trunk = [
-        { x: treeX, y: treeBaseY },
-        { x: treeX - 8, y: groundY - 70 },
-        { x: treeX + 4, y: groundY - 145 },
-        { x: treeX + 5, y: groundY - 255 }
+        { x: treeX - 2, y: treeBaseY },
+        { x: treeX - 12, y: groundY - 80 },
+        { x: treeX + 4, y: groundY - 155 },
+        { x: treeX + 2, y: groundY - 250 }
       ];
     
-      drawTaperedBranch(trunk, p, 26, 3.2, green);
+      drawTaperedBranch(trunk, p, 30, 3.5, green);
     
-      if (progress > 0.14) {
-        const bp = clamp((progress - 0.14) / 0.86, 0, 1);
+      if (progress > 0.12) {
+        const bp = clamp((progress - 0.12) / 0.88, 0, 1);
     
         const branches = [
           {
             points: [
-              { x: treeX - 2, y: groundY - 72 },
-              { x: treeX - 42, y: groundY - 108 },
-              { x: treeX - 95, y: groundY - 145 },
-              { x: treeX - 155, y: groundY - 165 }
+              { x: treeX - 4, y: groundY - 80 },
+              { x: treeX - 42, y: groundY - 110 },
+              { x: treeX - 90, y: groundY - 145 },
+              { x: treeX - 150, y: groundY - 162 }
             ],
-            sw: 11,
-            ew: 2.2
+            sw: 13,
+            ew: 2.4
           },
           {
             points: [
-              { x: treeX + 1, y: groundY - 90 },
-              { x: treeX + 42, y: groundY - 120 },
-              { x: treeX + 92, y: groundY - 145 },
-              { x: treeX + 155, y: groundY - 162 }
+              { x: treeX - 2, y: groundY - 100 },
+              { x: treeX + 42, y: groundY - 125 },
+              { x: treeX + 90, y: groundY - 150 },
+              { x: treeX + 150, y: groundY - 168 }
             ],
-            sw: 10,
-            ew: 2.2
+            sw: 12,
+            ew: 2.4
           },
           {
             points: [
-              { x: treeX - 1, y: groundY - 132 },
-              { x: treeX - 33, y: groundY - 170 },
-              { x: treeX - 67, y: groundY - 205 },
-              { x: treeX - 95, y: groundY - 245 }
+              { x: treeX + 0, y: groundY - 145 },
+              { x: treeX - 22, y: groundY - 175 },
+              { x: treeX - 52, y: groundY - 205 },
+              { x: treeX - 88, y: groundY - 235 }
             ],
-            sw: 8,
+            sw: 8.5,
             ew: 1.7
           },
           {
             points: [
-              { x: treeX + 4, y: groundY - 140 },
-              { x: treeX + 34, y: groundY - 178 },
-              { x: treeX + 72, y: groundY - 210 },
-              { x: treeX + 112, y: groundY - 245 }
+              { x: treeX + 3, y: groundY - 160 },
+              { x: treeX + 30, y: groundY - 190 },
+              { x: treeX + 67, y: groundY - 220 },
+              { x: treeX + 110, y: groundY - 250 }
             ],
             sw: 8,
-            ew: 1.7
+            ew: 1.6
           },
           {
             points: [
-              { x: treeX + 5, y: groundY - 205 },
-              { x: treeX - 5, y: groundY - 225 },
-              { x: treeX - 20, y: groundY - 245 },
-              { x: treeX - 42, y: groundY - 275 }
+              { x: treeX + 2, y: groundY - 205 },
+              { x: treeX - 8, y: groundY - 225 },
+              { x: treeX - 22, y: groundY - 245 },
+              { x: treeX - 38, y: groundY - 272 }
             ],
             sw: 5,
-            ew: 1.2
+            ew: 1
           },
           {
             points: [
-              { x: treeX + 5, y: groundY - 205 },
-              { x: treeX + 20, y: groundY - 225 },
-              { x: treeX + 35, y: groundY - 248 },
-              { x: treeX + 48, y: groundY - 285 }
+              { x: treeX + 2, y: groundY - 210 },
+              { x: treeX + 12, y: groundY - 232 },
+              { x: treeX + 22, y: groundY - 252 },
+              { x: treeX + 30, y: groundY - 282 }
             ],
-            sw: 4.5,
-            ew: 1
+            sw: 4.2,
+            ew: 0.8
           }
         ];
     
@@ -350,25 +350,66 @@
         }
     
         const twigs = [
-          [[-90,-145],[-115,-158],[-135,-174],[-150,-195]],
-          [[-120,-158],[-140,-158],[-160,-160],[-180,-167]],
-          [[-55,-200],[-72,-218],[-88,-235],[-105,-255]],
-          [[70,-205],[88,-220],[105,-235],[130,-245]],
-          [[105,-150],[130,-165],[150,-178],[172,-195]],
-          [[115,-150],[140,-148],[160,-146],[180,-150]],
-          [[-22,-245],[-35,-260],[-48,-272],[-62,-285]],
-          [[28,-248],[38,-265],[48,-278],[60,-292]]
+          {
+            points: [
+              { x: treeX - 88, y: groundY - 145 },
+              { x: treeX - 110, y: groundY - 160 },
+              { x: treeX - 128, y: groundY - 178 },
+              { x: treeX - 145, y: groundY - 198 }
+            ],
+            sw: 2
+          },
+          {
+            points: [
+              { x: treeX - 115, y: groundY - 155 },
+              { x: treeX - 135, y: groundY - 154 },
+              { x: treeX - 155, y: groundY - 156 },
+              { x: treeX - 175, y: groundY - 164 }
+            ],
+            sw: 1.8
+          },
+          {
+            points: [
+              { x: treeX + 92, y: groundY - 152 },
+              { x: treeX + 116, y: groundY - 162 },
+              { x: treeX + 138, y: groundY - 178 },
+              { x: treeX + 160, y: groundY - 198 }
+            ],
+            sw: 2
+          },
+          {
+            points: [
+              { x: treeX + 105, y: groundY - 158 },
+              { x: treeX + 128, y: groundY - 154 },
+              { x: treeX + 150, y: groundY - 152 },
+              { x: treeX + 172, y: groundY - 158 }
+            ],
+            sw: 1.8
+          },
+          {
+            points: [
+              { x: treeX - 55, y: groundY - 202 },
+              { x: treeX - 70, y: groundY - 218 },
+              { x: treeX - 84, y: groundY - 236 },
+              { x: treeX - 100, y: groundY - 255 }
+            ],
+            sw: 1.8
+          },
+          {
+            points: [
+              { x: treeX + 68, y: groundY - 220 },
+              { x: treeX + 86, y: groundY - 232 },
+              { x: treeX + 105, y: groundY - 242 },
+              { x: treeX + 128, y: groundY - 250 }
+            ],
+            sw: 1.8
+          }
         ];
     
-        ctx.globalAlpha = 0.55;
+        ctx.globalAlpha = 0.45;
     
         for (const t of twigs) {
-          const twig = t.map(([x, y]) => ({
-            x: treeX + x,
-            y: groundY + y
-          }));
-    
-          drawTaperedBranch(twig, bp, 2.1, 0.35, green);
+          drawTaperedBranch(t.points, bp, t.sw, 0.35, green);
         }
     
         ctx.globalAlpha = 1;
