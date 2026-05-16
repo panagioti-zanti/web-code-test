@@ -447,33 +447,56 @@
     }
 
     function drawLeaves(progress) {
+    
       for (const leaf of leaves) {
+    
+        /*
+          Random appearance timing
+        */
         const local = clamp(
-          (progress * 190 - leaf.delay) / 80,
+          (progress * 190 - leaf.delay) / 45,
           0,
           1
         );
-
+    
+        /*
+          Smooth fade in
+        */
         const e = easeOutCubic(local);
-
+    
+        /*
+          Final fixed position
+          attached to tree
+        */
         const x =
           treeX +
-          leaf.startRelX +
-          (leaf.relX - leaf.startRelX) * e;
-
+          leaf.relX;
+    
         const y =
-          leaf.startY +
-          (leaf.finalY - leaf.startY) * e;
-
+          leaf.finalY;
+    
+        /*
+          Small floating motion
+        */
         const sway =
-          Math.sin(frame * 0.025 + leaf.phase) * leaf.sway;
-
+          Math.sin(
+            frame * 0.025 + leaf.phase
+          ) * leaf.sway;
+    
         drawHeart(
           x + sway,
           y,
+    
+          /*
+            Hearts scale in place
+            instead of travelling outward
+          */
           leaf.size * e * leaf.depth,
+    
           leaf.colour,
+    
           leaf.opacity * e,
+    
           leaf.rotation
         );
       }
