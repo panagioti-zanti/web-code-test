@@ -272,8 +272,8 @@ function drawTree(progress) {
   const trunk = [
     { x: treeX - 2, y: treeBaseY },
     { x: treeX - 8, y: groundY - 65 },
-    { x: treeX + 2, y: groundY - 135 },
-    { x: treeX + 1, y: groundY - 215 }
+    { x: treeX + 2, y: groundY - 200 },
+    { x: treeX + 1, y: groundY - 235 }
   ];
 
   drawTaperedBranch(trunk, p, 22, 2.4, green);
@@ -417,7 +417,7 @@ function drawTree(progress) {
 
   ctx.restore();
 }
-  
+/*
 function createLeaves() {
   leaves.length = 0;
   fallingLeaves.length = 0;
@@ -507,7 +507,7 @@ function drawLeaves(progress) {
     );
   }
 }
-
+*/
 function drawFallingLeaves(active) {
   if (!active) return;
 
