@@ -285,10 +285,10 @@ function drawTree(progress) {
       {
         // lower left branch
         points: [
-          { x: treeX + 2, y: groundY - 82 },
-          { x: treeX - 20, y: groundY - 105 },
-          { x: treeX - 75, y: groundY - 150 },
-          { x: treeX - 110, y: groundY - 152 }
+          { x: treeX + 2, y: groundY - 82 }, // starting point x being right left y being up down
+          { x: treeX - 20, y: groundY - 105 },// adjusting the angle of the branch
+          { x: treeX - 75, y: groundY - 150 },// adjusting the angle of the branch
+          { x: treeX - 110, y: groundY - 152 } // end point of the branch
         ],
         sw: 10,
         ew: 0.25
@@ -298,10 +298,10 @@ function drawTree(progress) {
         points: [
           { x: treeX + 10, y: groundY - 96 },
           { x: treeX + 28, y: groundY - 118 },
-          { x: treeX + 68, y: groundY - 142 },
-          { x: treeX + 118, y: groundY - 160 }
+          { x: treeX + 72, y: groundY - 142 },
+          { x: treeX + 92, y: groundY - 160 }
         ],
-        sw: 15,
+        sw: 11,
         ew: 0.25
       },
       {
