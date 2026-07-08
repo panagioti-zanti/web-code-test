@@ -105,7 +105,7 @@ let frame = 0;
 const startHeart = {
   x: 425,
   y: 170,
-  size: 27
+  size: 32
 };
 
 const impactX = 425;
@@ -143,24 +143,24 @@ function drawStartHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 
   ctx.beginPath();
 
-  ctx.moveTo(0, size * 1.15);
+  ctx.moveTo(0, size * 1.30);
 
   ctx.bezierCurveTo(
+    -size * 1.75, 
+    size * 0.25, 
     -size * 1.55,
-    size * 0.25,
-    -size * 1.55,
-    -size * 1.05,
+    -size * 1.25,
     0,
-    -size * 0.45
+    -size * 0.55
   );
 
   ctx.bezierCurveTo(
     size * 1.55,
-    -size * 1.05,
-    size * 1.55,
+    -size * 1.25,
+    size * 1.75,
     size * 0.25,
     0,
-    size * 1.15
+    size * 1.30
   );
 
   ctx.fill();
