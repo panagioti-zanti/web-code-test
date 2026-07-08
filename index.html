@@ -144,32 +144,35 @@ function drawStartHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 
   ctx.beginPath();
 
-  ctx.moveTo(0, 1.45);
+  // start at bottom point
+  ctx.moveTo(0, 1.35);
 
-  // left side
+  // left lower side
   ctx.bezierCurveTo(
-    -1.65, 0.25,
-    -1.75, -1.05,
-    -0.62, -1.18
+    -1.45, 0.45,
+    -1.75, -0.55,
+    -1.05, -1.05
   );
 
+  // left top lobe into notch
   ctx.bezierCurveTo(
-    -0.25, -1.22,
-    -0.05, -1.05,
-    0, -0.78
+    -0.55, -1.40,
+    -0.10, -1.10,
+    0, -0.65
   );
 
-  // right side
+  // right top lobe
   ctx.bezierCurveTo(
-    0.05, -1.05,
-    0.25, -1.22,
-    0.62, -1.18
+    0.10, -1.10,
+    0.55, -1.40,
+    1.05, -1.05
   );
 
+  // right lower side back to bottom
   ctx.bezierCurveTo(
-    1.75, -1.05,
-    1.65, 0.25,
-    0, 1.25
+    1.75, -0.55,
+    1.45, 0.45,
+    0, 1.35
   );
 
   ctx.fill();
