@@ -230,7 +230,7 @@ function cubicBezier(points, t) {
   return { x, y };
 }
 
-function drawTaperedBranch(points, progress, startWidth, endWidth, colour = "#00a58f") {
+function drawTaperedBranch(points, progress, startWidth, endWidth, colour = "#00a58f", taper = 1.0) {
   const grow = easeOutCubic(progress);
   const steps = 60;
 
@@ -245,7 +245,9 @@ function drawTaperedBranch(points, progress, startWidth, endWidth, colour = "#00
     const a = cubicBezier(points, t1);
     const b = cubicBezier(points, t2);
 
-    ctx.lineWidth = startWidth + (endWidth - startWidth) * t1;
+    const taperT = Math.pow(t1, taper);
+    
+    ctx.lineWidth = startWidth + (endWidth - startWidth) * taperT;
 
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
@@ -303,6 +305,7 @@ function drawTree(progress) {
         ],
         sw: 10,
         ew: 0.1
+        taper: 0.5
       },
       {
         // upper left branch
@@ -329,7 +332,7 @@ function drawTree(progress) {
     ];
 
     for (const b of branches) {
-      drawTaperedBranch(b.points, bp, b.sw, b.ew, green);
+      drawTaperedBranch(b.points, bp, b.sw, b.ew, green, b.taper);
     }
 
     const twigs = [
