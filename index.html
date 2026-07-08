@@ -138,29 +138,38 @@ function drawStartHeart(x, y, size, colour, opacity = 1, rotation = 0) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
+  ctx.scale(size, size);
   ctx.globalAlpha = opacity;
   ctx.fillStyle = colour;
 
   ctx.beginPath();
 
-  ctx.moveTo(0, size * 1.30);
+  ctx.moveTo(0, 1.25);
 
+  // left side
   ctx.bezierCurveTo(
-    -size * 1.75, 
-    size * 0.25, 
-    -size * 1.55,
-    -size * 1.25,
-    0,
-    -size * 0.55
+    -1.65, 0.25,
+    -1.75, -1.05,
+    -0.62, -1.18
   );
 
   ctx.bezierCurveTo(
-    size * 1.55,
-    -size * 1.25,
-    size * 1.75,
-    size * 0.25,
-    0,
-    size * 1.30
+    -0.25, -1.22,
+    -0.05, -1.05,
+    0, -0.78
+  );
+
+  // right side
+  ctx.bezierCurveTo(
+    0.05, -1.05,
+    0.25, -1.22,
+    0.62, -1.18
+  );
+
+  ctx.bezierCurveTo(
+    1.75, -1.05,
+    1.65, 0.25,
+    0, 1.25
   );
 
   ctx.fill();
