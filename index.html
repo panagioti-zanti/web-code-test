@@ -171,7 +171,7 @@ function drawHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 }
 
 function drawStartScreen() {
-  drawHeart(startHeart.x, startHeart.y, startHeart.size, "#ff0000");
+  drawHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000");
 
   ctx.strokeStyle = "#333";
   ctx.lineWidth = 2;
@@ -212,7 +212,7 @@ function drawBall(progress) {
     return;
   }
 
-  ctx.fillStyle = "#ff0000";
+  ctx.fillStyle = "#E60000";
   ctx.beginPath();
   ctx.arc(ballX, ballY, 13, 0, Math.PI * 2);
   ctx.fill();
