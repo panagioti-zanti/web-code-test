@@ -141,24 +141,22 @@ function drawHeart(x, y, size, colour, opacity = 1, rotation = 0) {
   ctx.fillStyle = colour;
 
   ctx.beginPath();
-  ctx.moveTo(0, size * 0.35);
 
+  // bottom point
+  ctx.moveTo(0, size * 0.85);
+
+  // left half
   ctx.bezierCurveTo(
-    -size,
-    -size * 0.35,
-    -size * 0.6,
-    -size,
-    0,
-    -size * 0.45
+    -size * 1.35, size * 0.05,
+    -size * 1.15, -size * 1.00,
+    0, -size * 0.48
   );
 
+  // right half
   ctx.bezierCurveTo(
-    size * 0.6,
-    -size,
-    size,
-    -size * 0.35,
-    0,
-    size * 0.35
+    size * 1.15, -size * 1.00,
+    size * 1.35, size * 0.05,
+    0, size * 0.85
   );
 
   ctx.fill();
@@ -167,7 +165,7 @@ function drawHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 }
 
 function drawStartScreen() {
-  drawHeart(startHeart.x, startHeart.y, startHeart.size, "#800020");
+  drawHeart(startHeart.x, startHeart.y, startHeart.size, "#8B0000");
 
   ctx.strokeStyle = "#333";
   ctx.lineWidth = 2;
