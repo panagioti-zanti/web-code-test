@@ -216,16 +216,22 @@ function drawTreeHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 
 function drawStartScreen() {
   drawStartHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000");
-/*
+
   ctx.strokeStyle = "#333";
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
 
   ctx.beginPath();
+  
+  //Diagonal line
   ctx.moveTo(startHeart.x, startHeart.y + 35);
   ctx.lineTo(startHeart.x, startHeart.y + 95);
+
+// Horizontal line
+  ctx.lineTo(startHeart.x + 120, startHeart.y + 75);
+  
   ctx.stroke();
-*/
+
   ctx.fillStyle = "#333";
   ctx.font = "22px Arial";
   ctx.textAlign = "center";
