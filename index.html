@@ -217,7 +217,7 @@ function drawTreeHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 function drawStartScreen() {
   drawStartHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000");
 
-  ctx.strokeStyle = "#E60001";
+  ctx.strokeStyle = "#800000";
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
 
@@ -236,7 +236,7 @@ function drawStartScreen() {
   ctx.fillStyle = "#333";
   ctx.font = "22px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("click here", startHeart.x - 10, startHeart.y + 10);
+  ctx.fillText("click here", startHeart.x - 5, startHeart.y -20);
   
 }
 
