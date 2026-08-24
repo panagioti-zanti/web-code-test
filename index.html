@@ -148,47 +148,46 @@ function drawStartHeart(x, y, size, colour, opacity = 1, rotation = 0) {
   ctx.moveTo(0, 1.55);
 
   // LEFT LOWER SIDE
-  // from bottom point to halfway point
+  // pulled inward near the point, but keeps the middle wide
   ctx.bezierCurveTo(
-    -0.35, 1.25,
-    -0.75, 0.75,
+    -0.18, 1.28,
+    -0.55, 0.82,
     -1.10, 0.35
   );
 
   // LEFT UPPER SIDE
-  // from halfway point into left lobe
   ctx.bezierCurveTo(
-    -1.55, -0.10,
-    -1.65, -0.70,
-    -1.05, -1.05
+    -1.55, -0.05,
+    -1.65, -0.72,
+    -1.08, -1.08
   );
 
-  // LEFT LOBE INTO NOTCH
+  // LEFT TOP LOBE - rounder
   ctx.bezierCurveTo(
-    -0.55, -1.40,
-    -0.10, -1.10,
+    -0.72, -1.42,
+    -0.25, -1.38,
     0, -0.65
   );
 
-  // RIGHT LOBE
+  // RIGHT TOP LOBE - rounder
   ctx.bezierCurveTo(
-    0.10, -1.10,
-    0.55, -1.40,
-    1.05, -1.05
+    0.25, -1.38,
+    0.72, -1.42,
+    1.08, -1.08
   );
 
   // RIGHT UPPER SIDE
   ctx.bezierCurveTo(
-    1.65, -0.70,
-    1.55, -0.10,
+    1.65, -0.72,
+    1.55, -0.05,
     1.10, 0.35
   );
 
   // RIGHT LOWER SIDE
-  // halfway point back into bottom tip
+  // pulled inward near the point
   ctx.bezierCurveTo(
-    0.75, 0.75,
-    0.35, 1.25,
+    0.55, 0.82,
+    0.18, 1.28,
     0, 1.55
   );
 
@@ -232,7 +231,7 @@ function drawTreeHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 }
 
 function drawStartScreen() {
-  drawStartHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000"); // might use this "#E60000"
+  drawStartHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000"); // 
 
   ctx.strokeStyle = "#800000";
   ctx.lineWidth = 2;
