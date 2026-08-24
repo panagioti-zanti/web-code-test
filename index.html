@@ -217,26 +217,26 @@ function drawTreeHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 function drawStartScreen() {
   drawStartHeart(startHeart.x, startHeart.y, startHeart.size, "#E60000");
 
-  ctx.strokeStyle = "#E60000";
+  ctx.strokeStyle = "#E60001";
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
 
   ctx.beginPath();
   
   //Diagonal line
-  ctx.moveTo(startHeart.x + 30, startHeart.y );
-  ctx.lineTo(startHeart.x + 50, startHeart.y + 15);
+  ctx.moveTo(startHeart.x + 30, startHeart.y + 10 );
+  ctx.lineTo(startHeart.x + 50, startHeart.y + 25);
 
   // Horizontal line
-  ctx.moveTo(startHeart.x + 50 , startHeart.y + 15);
-  ctx.lineTo(startHeart.x + 130, startHeart.y + 15);
+  ctx.moveTo(startHeart.x + 50 , startHeart.y + 25);
+  ctx.lineTo(startHeart.x + 130, startHeart.y + 25);
   
   ctx.stroke();
 
   ctx.fillStyle = "#333";
   ctx.font = "22px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("click here", startHeart.x + 10, startHeart.y + 80);
+  ctx.fillText("click here", startHeart.x - 10, startHeart.y + 10);
   
 }
 
