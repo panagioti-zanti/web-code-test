@@ -241,18 +241,18 @@ function drawStartScreen() {
   
   //Diagonal line
   ctx.moveTo(startHeart.x + 28, startHeart.y + 8 );
-  ctx.lineTo(startHeart.x + 45, startHeart.y + 32);
+  ctx.lineTo(startHeart.x + 45, startHeart.y + 40);
 
   // Horizontal line
-  ctx.moveTo(startHeart.x + 45 , startHeart.y + 32);
-  ctx.lineTo(startHeart.x + 135, startHeart.y + 32);
+  ctx.moveTo(startHeart.x + 45 , startHeart.y + 40);
+  ctx.lineTo(startHeart.x + 135, startHeart.y + 40);
   
   ctx.stroke();
 
   ctx.fillStyle = "#333";
   ctx.font = "20px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("click here", startHeart.x + 90, startHeart.y + 33);
+  ctx.fillText("click here", startHeart.x + 90, startHeart.y + 47);
   
 }
 
