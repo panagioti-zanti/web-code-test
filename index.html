@@ -164,14 +164,14 @@ function drawStartHeart(x, y, size, colour, opacity = 1, rotation = 0) {
 
   // LEFT TOP LOBE - rounder
   ctx.bezierCurveTo(
-    -0.72, -1.22, //-0.72, -1.42
-    -0.25, -1.27, //-0.25, -1.38
+    -0.72, -1.22, 
+    -0.25, -1.27, 
     0, -0.65
   );
 
   // RIGHT TOP LOBE - rounder
   ctx.bezierCurveTo(
-    0.25, -1.27, // 0.25, -1.38,
+    0.25, -1.27, 
     0.72, -1.22, 
     1.08, -1.08
   );
@@ -240,12 +240,12 @@ function drawStartScreen() {
   ctx.beginPath();
   
   //Diagonal line
-  ctx.moveTo(startHeart.x + 30, startHeart.y + 10 );
-  ctx.lineTo(startHeart.x + 50, startHeart.y + 25);
+  ctx.moveTo(startHeart.x + 25, startHeart.y + 5 );
+  ctx.lineTo(startHeart.x + 55, startHeart.y + 30);
 
   // Horizontal line
-  ctx.moveTo(startHeart.x + 50 , startHeart.y + 25);
-  ctx.lineTo(startHeart.x + 130, startHeart.y + 25);
+  ctx.moveTo(startHeart.x + 55 , startHeart.y + 30);
+  ctx.lineTo(startHeart.x + 130, startHeart.y + 30);
   
   ctx.stroke();
 
